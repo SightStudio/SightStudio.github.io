@@ -1,6 +1,6 @@
 import slugify from 'limax';
 
-import { SITE, APP_BLOG } from 'astrowind:config';
+import {SITE, APP_BLOG} from 'astrowind:config';
 
 import { trim } from '~/utils/utils';
 
@@ -86,10 +86,10 @@ export const getPermalink = (slug = '', type = 'page'): string => {
   return definitivePermalink(permalink);
 };
 
-/** */
+// 홈으로
 export const getHomePermalink = (): string => getPermalink('/');
 
-/** */
+// 블로그 링크
 export const getBlogPermalink = (): string => getPermalink(BLOG_BASE);
 
 /** */
