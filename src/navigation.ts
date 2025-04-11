@@ -6,12 +6,16 @@ import {getAsset, getBlogPermalink, getPermalink} from './utils/permalinks';
 export const headerData = {
   links: [
     {
-      text: '블로그',
+      text: 'ALL',
       href: getBlogPermalink(),
     },
     {
+      text: '개발',
+      href: getPermalink('dev', 'category'),
+    },
+    {
       text: '스터디',
-      href: getPermalink('/study'),
+      href: getPermalink('study', 'category'),
     },
   ],
 };
