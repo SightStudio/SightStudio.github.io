@@ -1,4 +1,4 @@
-import {getAsset, getBlogPermalink, getPermalink} from './utils/permalinks';
+import {getBlogPermalink, getPermalink} from './utils/permalinks';
 
 /**
  * 화면 상단의 헤더에 표시되는 네이게이션 바
