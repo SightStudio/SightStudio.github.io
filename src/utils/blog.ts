@@ -181,16 +181,17 @@ export const findLatestPosts = async ({ count }: { count?: number }): Promise<Ar
  * @param categorySlug 필터링할 카테고리 슬러그
  * @param count 가져올 글의 개수
  */
-export const findLatestPostsByCategory = async ({categorySlug, count,}: {
+export const findLatestPostsByCategory = async ({
+  categorySlug,
+  count,
+}: {
   categorySlug: string;
   count?: number;
 }): Promise<Array<Post>> => {
   const _count = count || 4;
   const posts = await fetchPosts();
 
-  return posts
-    .filter((post) => post.category?.slug === categorySlug)
-    .slice(0, _count);
+  return posts.filter((post) => post.category?.slug === categorySlug).slice(0, _count);
 };
 
 /** */
