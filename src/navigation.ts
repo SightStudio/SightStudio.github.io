@@ -28,4 +28,5 @@ export const footerData = {
     { ariaLabel: 'Tistory', icon: 'tabler:circle-letter-t', href: 'https://sightstudio.tistory.com' },
   ],
   footNote: `네가 선택한 개발자다. 악으로 깡으로 버텨라`,
+  secondaryLinks: [],
 };

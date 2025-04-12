@@ -3,7 +3,7 @@ import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
-import AnimeText from '~/components/react/AnimeText';
+import AnimeTypewriter from '~/components/react/AnimeTypeWriter';
 
 const metadata = {
   title: 'SightStudio 블로그',
@@ -31,7 +31,11 @@ const metadata = {
     ]}
   >
     <Fragment slot="title">
-      안녕하세요 👋 <span class="text-blue-500">SightStudio</span>입니다.
+      안녕하세요 👋
+      <span class="text-blue-500">
+        <AnimeTypewriter client:load text="SightStudio" duration={1300} />
+      </span>
+      입니다.
     </Fragment>
 
     <Fragment slot="subtitle">
