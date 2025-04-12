@@ -11,7 +11,7 @@ metadata:
   title:
     default: SightStudio 블로그
     template: '%s — SightStudio'
-  description: "\U0001F680 Suitable for Startups, Small Business, Sass Websites, Professional Portfolios, Marketing Websites, Landing Pages & Blogs."
+  description: "\U0001F525 네가 선택한 개발자다. 악으로 깡으로 버텨라."
   robots:
     index: true
     follow: true
