@@ -2,7 +2,7 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 
-import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
+import BlogLatestPosts from '~/components/widgets/sight/BlogLatestPosts.astro';
 import AnimeTypewriter from '~/components/react/AnimeTypeWriter';
 
 const metadata = {
@@ -43,16 +43,12 @@ const metadata = {
         <span class="font-semibold">소프트웨어 엔지니어</span> 로 일하며 부딪힌 문제들을 정리하고 해결합니다.
       </span>
 
-      <span class="hidden sm:block">
-        내가 겪은 고민과 해결 과정이, <span class="font-semibold">누군가에게 도움이 되길 바랍니다. </span>
-      </span>
-
       <span class="block mb-1 sm:hidden font-bold text-blue-600">SightStudio: Software Engineer.</span>
     </Fragment>
   </Hero>
 
   <BlogLatestPosts
-    title="최신 블로그 포스트"
+    title="최근 기술블로그 글"
     information={`The blog is used to display AstroWind documentation.
                         Each new article will be an important step that you will need to know to be an expert in creating a website using Astro + Tailwind CSS.
                         Astro is a very interesting technology. Thanks.

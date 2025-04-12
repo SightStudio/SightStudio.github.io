@@ -7,7 +7,7 @@ import { getBlogPermalink } from '~/utils/permalinks';
 import { findLatestPosts } from '~/utils/blog';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import type { Widget } from '~/types';
-import Button from '../ui/Button.astro';
+import Button from '~/components/ui/Button.astro';
 
 export interface Props extends Widget {
   title?: string;
@@ -17,6 +17,9 @@ export interface Props extends Widget {
   count?: number;
 }
 
+/**
+ * 최신 블로그 포스트 위젯
+ */
 const {
   title = await Astro.slots.render('title'),
   linkText = 'View all posts',

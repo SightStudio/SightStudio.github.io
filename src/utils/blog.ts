@@ -165,12 +165,32 @@ export const findPostsByIds = async (ids: Array<string>): Promise<Array<Post>> =
   }, []);
 };
 
-/** */
+/**
+ * 블로그 글 중 가장 최근 글을 가져오는 함수
+ * @param count 가져올 글의 개수
+ */
 export const findLatestPosts = async ({ count }: { count?: number }): Promise<Array<Post>> => {
   const _count = count || 4;
   const posts = await fetchPosts();
 
   return posts ? posts.slice(0, _count) : [];
+};
+
+/**
+ * 특정 카테고리에 해당하는 최신 글들을 가져오는 함수
+ * @param categorySlug 필터링할 카테고리 슬러그
+ * @param count 가져올 글의 개수
+ */
+export const findLatestPostsByCategory = async ({categorySlug, count,}: {
+  categorySlug: string;
+  count?: number;
+}): Promise<Array<Post>> => {
+  const _count = count || 4;
+  const posts = await fetchPosts();
+
+  return posts
+    .filter((post) => post.category?.slug === categorySlug)
+    .slice(0, _count);
 };
 
 /** */
