@@ -10,10 +10,7 @@ const ISSUE_TERM = 'pathname';
 export default function Utterances() {
   const ref = useRef<HTMLDivElement>(null);
 
-  const getTheme = () =>
-    document.documentElement.classList.contains('dark')
-      ? 'github-dark'
-      : 'github-light';
+  const getTheme = () => (document.documentElement.classList.contains('dark') ? 'github-dark' : 'github-light');
 
   useEffect(() => {
     if (!ref.current) return;
