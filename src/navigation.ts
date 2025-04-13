@@ -11,7 +11,7 @@ export const headerData = {
     },
     {
       text: '개발',
-      href: getPermalink('dev', 'category'),
+      href: getPermalink('develop', 'category'),
     },
     {
       text: '스터디',
