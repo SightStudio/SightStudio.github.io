@@ -5,26 +5,30 @@ export interface Post {
   /** A unique ID number that identifies a post. */
   id: string;
 
-  /** A post’s unique slug – part of the post’s URL based on its name, i.e. a post called “My Sample Page” has a slug “my-sample-page”. */
+  // slug는 permalink의 마지막 부분, 즉 글 제목을 URL-friendly 하게 바꾼 문자열 (eg. hello-world)
   slug: string;
 
-  /**  */
+  // 블로그 글이나 페이지의 고유 URL 경로 (eg. /blog/2025/hello-world)
   permalink: string;
 
-  /**  */
+  // 최초 작성일
   publishDate: Date;
-  /**  */
+
+  // 수정일
   updateDate?: Date;
 
   /**  */
   title: string;
+
   /** Optional summary of post content. */
   excerpt?: string;
+
   /**  */
   image?: ImageMetadata | string;
 
   /**  */
   category?: Taxonomy;
+
   /**  */
   tags?: Taxonomy[];
   /**  */
