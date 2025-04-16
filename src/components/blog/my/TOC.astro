@@ -1,0 +1,40 @@
+---
+const { headings } = Astro.props;
+---
+
+{
+  headings.length > 0 && (
+    <>
+      {/* PC: 본문 왼쪽에 고정 (중앙에서 너무 멀지 않게) */}
+      <aside class="hidden lg:block fixed top-32 right-[max(1rem,calc(50%-45rem))] w-64 text-sm z-30">
+        <div class="sticky top-32 bg-white/90 dark:bg-zinc-900/90 backdrop-blur border p-4 rounded-xl shadow-lg">
+          <p class="font-semibold mb-2">목차</p>
+          <ul class="space-y-1">
+            {headings.map(h => (
+              <li><a href={`#${h.slug}`} class="hover:underline">{h.text}</a></li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+
+      {/* Mobile: 우측 상단 floating button */}
+      <div class="lg:hidden fixed top-4 right-4 z-50">
+        <details class="relative">
+          <summary class="cursor-pointer p-2 rounded-full bg-white dark:bg-zinc-800 shadow border text-sm">📑</summary>
+          <div class="absolute right-0 mt-2 w-64 max-h-[70vh] overflow-y-auto bg-white dark:bg-zinc-900 shadow-lg border rounded-xl p-4 text-sm">
+            <p class="font-semibold mb-2">목차</p>
+            <ul class="space-y-1">
+              {headings.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`} class="hover:underline">
+                    {h.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </details>
+      </div>
+    </>
+  )
+}

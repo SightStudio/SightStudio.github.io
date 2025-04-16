@@ -4,9 +4,8 @@ import { APP_BLOG } from 'astrowind:config';
 import Grid from '~/components/blog/Grid.astro';
 
 import { getBlogPermalink } from '~/utils/permalinks';
-import { findLatestPosts } from '~/utils/blog';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
-import type { Widget } from '~/types';
+import type { Post, Widget } from '~/types';
 import Button from '~/components/ui/Button.astro';
 
 export interface Props extends Widget {
@@ -14,7 +13,7 @@ export interface Props extends Widget {
   linkText?: string;
   linkUrl?: string | URL;
   information?: string;
-  count?: number;
+  posts?: Post[];
 }
 
 /**
@@ -25,15 +24,14 @@ const {
   linkText = 'View all posts',
   linkUrl = getBlogPermalink(),
   information = await Astro.slots.render('information'),
-  count = 4,
-
   id,
   isDark = false,
   classes = {},
   bg = await Astro.slots.render('bg'),
+  posts = [],
 } = Astro.props;
 
-const posts = APP_BLOG.isEnabled ? await findLatestPosts({ count }) : [];
+// const targetPosts = APP_BLOG.isEnabled ? await findLatestPosts({ count }) : [];
 ---
 
 {

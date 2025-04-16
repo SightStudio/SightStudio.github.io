@@ -3,11 +3,14 @@ import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 
 import BlogLatestPosts from '~/components/widgets/sight/BlogLatestPosts.astro';
+import { findLatestPostsByTag } from '../utils/blog';
 
 const metadata = {
   title: 'SightStudio 블로그',
   ignoreTitleTemplate: true,
 };
+
+const mainPost = await findLatestPostsByTag({ tagSlug: 'display-main', count: 8 });
 ---
 
 <Layout metadata={metadata}>
@@ -41,5 +44,5 @@ const metadata = {
     </Fragment>
   </Hero>
 
-  <BlogLatestPosts title="기술블로그" information={``} linkText="전체 글 보기" />
+  <BlogLatestPosts title="기술블로그" information={``} linkText="전체 글 보기" posts={mainPost} />
 </Layout>

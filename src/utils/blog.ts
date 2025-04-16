@@ -1,9 +1,9 @@
 import type { PaginateFunction } from 'astro';
-import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import type { Post } from '~/types';
 import { APP_BLOG } from 'astrowind:config';
-import { cleanSlug, trimSlash, BLOG_BASE, POST_PERMALINK_PATTERN, CATEGORY_BASE, TAG_BASE } from './permalinks';
+import { BLOG_BASE, CATEGORY_BASE, cleanSlug, POST_PERMALINK_PATTERN, TAG_BASE, trimSlash } from './permalinks';
 
 const generatePermalink = async ({
   id,
@@ -42,7 +42,7 @@ const generatePermalink = async ({
 
 const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> => {
   const { id, data } = post;
-  const { Content, remarkPluginFrontmatter } = await render(post);
+  const { Content, headings, remarkPluginFrontmatter } = await render(post);
 
   const {
     publishDate: rawPublishDate = new Date(),
@@ -96,6 +96,7 @@ const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> =
     Content: Content,
     // or 'content' in case you consume from API
 
+    headings,
     readingTime: remarkPluginFrontmatter?.readingTime,
   };
 };
@@ -178,20 +179,20 @@ export const findLatestPosts = async ({ count }: { count?: number }): Promise<Ar
 
 /**
  * 특정 카테고리에 해당하는 최신 글들을 가져오는 함수
- * @param categorySlug 필터링할 카테고리 슬러그
+ * @param tagSlug 필터링할 태그 슬러그
  * @param count 가져올 글의 개수
  */
-export const findLatestPostsByCategory = async ({
-  categorySlug,
+export const findLatestPostsByTag = async ({
+  tagSlug,
   count,
 }: {
-  categorySlug: string;
+  tagSlug: string;
   count?: number;
 }): Promise<Array<Post>> => {
   const _count = count || 4;
   const posts = await fetchPosts();
 
-  return posts.filter((post) => post.category?.slug === categorySlug).slice(0, _count);
+  return posts.filter((post) => post.tags?.some((tag) => tag.slug === tagSlug)).slice(0, _count);
 };
 
 /** */

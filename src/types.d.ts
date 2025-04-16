@@ -26,11 +26,12 @@ export interface Post {
   /**  */
   image?: ImageMetadata | string;
 
-  /**  */
+  // 카테고리
   category?: Taxonomy;
 
   /**  */
   tags?: Taxonomy[];
+
   /**  */
   author?: string;
 
@@ -46,6 +47,14 @@ export interface Post {
 
   /**  */
   readingTime?: number;
+
+  headings: Heading[];
+}
+
+export interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
 }
 
 export interface Taxonomy {
