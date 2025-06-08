@@ -37,15 +37,18 @@ export type ImagesOptimizer = (
 /* ******* */
 const config = {
   // FIXME: Use this when image.width is minor than deviceSizes
-  imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  imageSizes: [16, 32, 48, 64, 96, 128, 256, 320, 384, 480],
 
   deviceSizes: [
+    320, // small mobile phones
+    480, // large mobile phones
     640, // older and lower-end phones
     750, // iPhone 6-8
     828, // iPhone XR/11
     960, // older horizontal phones
     1080, // iPhone 6-8 Plus
     1280, // 720p
+    1440, // common desktop
     1668, // Various iPads
     1920, // 1080p
     2048, // QXGA

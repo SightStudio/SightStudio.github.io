@@ -76,6 +76,12 @@ export default defineConfig({
 
   image: {
     domains: ['cdn.pixabay.com'],
+    service: {
+      entrypoint: 'astro/assets/services/sharp',
+      config: {
+        limitInputPixels: 268402689, // 16384 x 16384
+      },
+    },
   },
 
   markdown: {

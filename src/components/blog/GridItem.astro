@@ -2,7 +2,7 @@
 import { APP_BLOG } from 'astrowind:config';
 import type { Post } from '~/types';
 
-import Image from '~/components/common/Image.astro';
+import LazyImage from '~/components/common/LazyImage.astro';
 
 import { findImage } from '~/utils/images';
 import { getPermalink } from '~/utils/permalinks';
@@ -25,12 +25,14 @@ const link = APP_BLOG?.post?.isEnabled ? getPermalink(post.permalink, 'post') : 
       image &&
         (link ? (
           <a href={link}>
-            <Image
+            <LazyImage
               src={image}
               class="w-full md:h-full rounded shadow-lg bg-gray-400 dark:bg-slate-700"
-              widths={[400, 900]}
+              mobileWidths={[280, 320, 400]}
+              desktopWidths={[300, 400, 600]}
+              mobileSizes="(max-width: 767px) 90vw"
+              desktopSizes="(min-width: 768px) 25vw"
               width={400}
-              sizes="(max-width: 900px) 400px, 900px"
               alt={post.title}
               aspectRatio="16:9"
               layout="cover"
@@ -39,12 +41,14 @@ const link = APP_BLOG?.post?.isEnabled ? getPermalink(post.permalink, 'post') : 
             />
           </a>
         ) : (
-          <Image
+          <LazyImage
             src={image}
             class="w-full md:h-full rounded shadow-lg bg-gray-400 dark:bg-slate-700"
-            widths={[400, 900]}
+            mobileWidths={[280, 320, 400]}
+            desktopWidths={[300, 400, 600]}
+            mobileSizes="(max-width: 767px) 90vw"
+            desktopSizes="(min-width: 768px) 25vw"
             width={400}
-            sizes="(max-width: 900px) 400px, 900px"
             alt={post.title}
             aspectRatio="16:9"
             layout="cover"

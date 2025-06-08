@@ -36,6 +36,9 @@ const { language, textDirection } = I18N;
     <SiteVerification />
     <Analytics />
 
+    <!-- Preload critical images for better performance -->
+    <link rel="preload" as="image" href="/src/assets/images/SightStudioOG.webp" type="image/webp" />
+
     <!-- Comment the line below to disable View Transitions -->
     <ClientRouter fallback="swap" />
 

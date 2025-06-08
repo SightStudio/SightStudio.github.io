@@ -18,7 +18,7 @@ metadata:
   openGraph:
     site_name: SightStudio
     images:
-      - url: '~/assets/images/SightStudioOG.png'
+      - url: '~/assets/images/SightStudioOG.webp'
         width: 1200
         height: 628
     type: website
