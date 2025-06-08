@@ -207,12 +207,20 @@ export const getStaticPathsBlogList = async ({ paginate }: { paginate: PaginateF
 /** */
 export const getStaticPathsBlogPost = async () => {
   if (!isBlogEnabled || !isBlogPostRouteEnabled) return [];
-  return (await fetchPosts()).flatMap((post) => ({
-    params: {
-      blog: post.permalink,
-    },
-    props: { post },
-  }));
+  return (await fetchPosts())
+    .filter((post) => {
+      // .well-known 경로와 시스템 파일들을 필터링
+      const permalink = post.permalink;
+      return !permalink.startsWith('.well-known') && 
+             !permalink.startsWith('robots.txt') && 
+             !permalink.startsWith('sitemap');
+    })
+    .flatMap((post) => ({
+      params: {
+        blog: post.permalink,
+      },
+      props: { post },
+    }));
 };
 
 /** */
