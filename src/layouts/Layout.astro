@@ -17,6 +17,9 @@ import { ClientRouter } from 'astro:transitions';
 
 import type { MetaData as MetaDataType } from '~/types';
 
+// 이미지 import로 올바른 빌드 경로 확보
+import ogImage from '~/assets/images/SightStudioOG.webp';
+
 export interface Props {
   metadata?: MetaDataType;
 }
@@ -37,7 +40,7 @@ const { language, textDirection } = I18N;
     <Analytics />
 
     <!-- Preload critical images for better performance -->
-    <link rel="preload" as="image" href="/src/assets/images/SightStudioOG.webp" type="image/webp" />
+    <link rel="preload" as="image" href={ogImage.src} type="image/webp" />
 
     <!-- 사이트 갱신을 위한 메타데이터 -->
     <meta name="last-modified" content={new Date().toISOString()} />
