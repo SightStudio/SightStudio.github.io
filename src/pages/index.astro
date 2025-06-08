@@ -8,6 +8,12 @@ import { findLatestPostsByTag } from '../utils/blog';
 const metadata = {
   title: 'SightStudio 블로그',
   ignoreTitleTemplate: true,
+  description: '소프트웨어 엔지니어로 일하며 마주한 문제들을 기록합니다.',
+  robots: {
+    index: true,
+    follow: true,
+    'max-snippet': 160,
+  },
 };
 
 const mainPost = await findLatestPostsByTag({ tagSlug: 'display-main', count: 8 });
@@ -40,7 +46,7 @@ const mainPost = await findLatestPostsByTag({ tagSlug: 'display-main', count: 8 
       <span class="hidden sm:block"> 소프트웨어 엔지니어로 일하며 마주한 문제들을 기록합니다. </span>
 
       <!-- 모바일 화면 노출부 -->
-      <span class="block mb-1 sm:hidden font-bold"> 개발자로 일하며 마주한 문제들을 기록합니다. </span>
+      <span class="block mb-1 sm:hidden font-bold" data-nosnippet> 개발자로 일하며 마주한 문제들을 기록합니다. </span>
     </Fragment>
   </Hero>
 
