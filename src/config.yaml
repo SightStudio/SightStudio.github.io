@@ -15,6 +15,7 @@ metadata:
   robots:
     index: true
     follow: true
+    max-snippet: 160
   openGraph:
     site_name: SightStudio
     images:
