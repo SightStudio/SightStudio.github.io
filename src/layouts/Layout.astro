@@ -39,6 +39,11 @@ const { language, textDirection } = I18N;
     <!-- Preload critical images for better performance -->
     <link rel="preload" as="image" href="/src/assets/images/SightStudioOG.webp" type="image/webp" />
 
+    <!-- 사이트 갱신을 위한 메타데이터 -->
+    <meta name="last-modified" content={new Date().toISOString()} />
+    <meta name="revisit-after" content="1 days" />
+    <meta name="author" content="SightStudio" />
+    
     <!-- Comment the line below to disable View Transitions -->
     <ClientRouter fallback="swap" />
 

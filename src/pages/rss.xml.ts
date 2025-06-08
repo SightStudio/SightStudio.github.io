@@ -27,6 +27,13 @@ export const GET = async () => {
     })),
 
     trailingSlash: SITE.trailingSlash,
+    
+    // RSS 피드 갱신 정보 추가
+    customData: `
+      <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+      <generator>SightStudio Blog - Astro</generator>
+      <webMaster>sdm3285@gmail.com (SightStudio)</webMaster>
+    `,
   });
 
   return new Response(rss, {

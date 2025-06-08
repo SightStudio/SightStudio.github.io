@@ -1,6 +1,7 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
 
 import BlogLatestPosts from '~/components/widgets/sight/BlogLatestPosts.astro';
 import { findLatestPostsByTag } from '../utils/blog';
@@ -51,4 +52,6 @@ const mainPost = await findLatestPostsByTag({ tagSlug: 'display-main', count: 8 
   </Hero>
 
   <BlogLatestPosts title="읽어보면 좋은 글" information={``} linkText="더 많은 글 보기" posts={mainPost} />
+  
+  <StructuredData type="website" />
 </Layout>
