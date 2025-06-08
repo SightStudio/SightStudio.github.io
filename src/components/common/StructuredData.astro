@@ -1,0 +1,51 @@
+---
+import { SITE, METADATA } from 'astrowind:config';
+
+interface Props {
+  type?: 'website' | 'article' | 'blog';
+  title?: string;
+  description?: string;
+  url?: string;
+  publishDate?: Date;
+  modifiedDate?: Date;
+}
+
+const { 
+  type = 'website',
+  title = METADATA?.title?.default,
+  description = METADATA?.description,
+  url = SITE?.site,
+  publishDate,
+  modifiedDate = new Date()
+} = Astro.props;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": type === 'article' ? 'Article' : type === 'blog' ? 'Blog' : 'WebSite',
+  "name": title,
+  "description": description,
+  "url": url,
+  "publisher": {
+    "@type": "Person",
+    "name": "SightStudio",
+    "email": "sdm3285@gmail.com",
+    "url": "https://github.com/SightStudio"
+  },
+  "author": {
+    "@type": "Person", 
+    "name": "SightStudio",
+    "email": "sdm3285@gmail.com"
+  },
+  "dateModified": modifiedDate.toISOString(),
+  ...(publishDate && { "datePublished": publishDate.toISOString() }),
+  ...(type === 'website' && {
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": `${url}/blog?q={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    }
+  })
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)} /> 

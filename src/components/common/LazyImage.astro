@@ -1,0 +1,37 @@
+---
+import Image from '~/components/common/Image.astro';
+import type { ImageProps } from '~/utils/images-optimization';
+
+interface Props extends ImageProps {
+  mobileWidths?: number[];
+  desktopWidths?: number[];
+  mobileSizes?: string;
+  desktopSizes?: string;
+}
+
+const {
+  mobileWidths = [280, 320, 480],
+  desktopWidths = [768, 1024, 1440],
+  mobileSizes = "(max-width: 767px) 100vw",
+  desktopSizes = "(min-width: 768px) 50vw",
+  widths,
+  sizes,
+  loading = 'lazy',
+  format = 'webp',
+  ...rest
+} = Astro.props;
+
+// 모바일과 데스크톱 widths 결합
+const combinedWidths = widths || [...mobileWidths, ...desktopWidths];
+
+// 모바일과 데스크톱 sizes 결합
+const combinedSizes = sizes || `${mobileSizes}, ${desktopSizes}`;
+---
+
+<Image
+  widths={combinedWidths}
+  sizes={combinedSizes}
+  loading={loading}
+  format={format}
+  {...rest}
+/> 
