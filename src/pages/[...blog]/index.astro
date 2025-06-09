@@ -43,9 +43,45 @@ const metadata = merge(
   },
   { ...(post?.metadata ? { ...post.metadata, canonical: post.metadata?.canonical || url } : {}) }
 ) as MetaData;
+
+// JSON-LD 구조화된 데이터 생성
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.title,
+  "description": post.excerpt || post.title,
+  "image": image ? (typeof image === 'string' ? image : image.src) : undefined,
+  "url": url,
+  "datePublished": post.publishDate?.toISOString(),
+  "dateModified": post.updateDate?.toISOString() || post.publishDate?.toISOString(),
+  "author": {
+    "@type": "Person",
+    "name": post.author || "SightStudio",
+    "url": "https://sightstudio.github.io"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "SightStudio",
+    "url": "https://sightstudio.github.io",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sightstudio.github.io/images/logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": url
+  },
+  "articleSection": post.category?.title,
+  "keywords": post.tags?.map(tag => tag.title).join(', '),
+  "timeRequired": `PT${post.readingTime || 1}M`
+};
 ---
 
 <Layout metadata={metadata}>
+  <!-- JSON-LD 구조화된 데이터 -->
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  
   <SinglePost post={{ ...post, image: image }} url={url}>
     {post.Content ? <post.Content /> : <Fragment set:html={post.content || ''} />}
   </SinglePost>

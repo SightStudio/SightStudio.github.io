@@ -1,3 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /.well-known/
+Disallow: /api/
+
+# 크롤 딜레이 설정 (1초)
+Crawl-delay: 1
+
 Sitemap: https://sightstudio.github.io/sitemap-index.xml

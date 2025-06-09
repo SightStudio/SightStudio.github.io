@@ -32,7 +32,6 @@ export default defineConfig({
     }),
     sitemap({
       entryLimit: 9999,
-      lastmod: new Date("2025-06-06T00:00:00Z")
     }),
     mdx(),
     icon({
