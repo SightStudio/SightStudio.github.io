@@ -30,9 +30,7 @@ export default defineConfig({
     tailwind({
       applyBaseStyles: false,
     }),
-    sitemap({
-      entryLimit: 9999,
-    }),
+    sitemap(),
     mdx(),
     icon({
       include: {

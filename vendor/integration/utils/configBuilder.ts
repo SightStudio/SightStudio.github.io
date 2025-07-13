@@ -90,7 +90,6 @@ const getSite = (config: Config) => {
     site: undefined,
     base: '/',
     trailingSlash: false,
-
     googleSiteVerificationId: '',
   };
 
