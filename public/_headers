@@ -1,2 +1,15 @@
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
+
+# 사이트맵 파일들에 대한 올바른 MIME 타입 설정
+/sitemap-index.xml
+  Content-Type: application/xml; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+/sitemap-*.xml
+  Content-Type: application/xml; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+# XML 파일들에 대한 일반적인 MIME 타입 설정
+*.xml
+  Content-Type: application/xml; charset=utf-8
