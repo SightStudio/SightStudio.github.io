@@ -30,11 +30,7 @@ export default defineConfig({
     tailwind({
       applyBaseStyles: false,
     }),
-    sitemap({
-      changefreq: 'weekly',
-      priority: 0.7,
-      lastmod: new Date(),
-    }),
+    sitemap(),
     mdx(),
     icon({
       include: {
