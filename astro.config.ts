@@ -37,8 +37,6 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
     sitemap({
-      changefreq: 'weekly',
-      priority: 0.7,
       serialize: (item) => ({
         ...item,
         lastmod: item.lastmod || dayjs().tz('Asia/Seoul').format(),
