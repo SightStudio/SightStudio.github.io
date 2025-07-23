@@ -16,12 +16,6 @@ import astrowind from './vendor/integration';
 import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/utils/frontmatter';
 
 import react from '@astrojs/react';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -39,7 +33,7 @@ export default defineConfig({
     sitemap({
       serialize: (item) => ({
         ...item,
-        lastmod: item.lastmod || dayjs().tz('Asia/Seoul').format(),
+        lastmod: item.lastmod || new Date().toISOString(),
       }),
     }),
     mdx(),
