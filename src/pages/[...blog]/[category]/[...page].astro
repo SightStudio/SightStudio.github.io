@@ -26,9 +26,38 @@ const metadata = {
     follow: blogCategoryRobots?.follow,
   },
 };
+
+// 카테고리 페이지 구조화된 데이터
+const categoryStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": `Category: ${category.title}`,
+  "description": `블로그 포스트 카테고리: ${category.title}`,
+  "url": `https://sightstudio.dev/category/${category.slug}`,
+  "publisher": {
+    "@type": "Person",
+    "name": "SightStudio",
+    "email": "sdm3285@gmail.com",
+    "url": "https://github.com/SightStudio"
+  },
+  "author": {
+    "@type": "Person", 
+    "name": "SightStudio",
+    "email": "sdm3285@gmail.com"
+  },
+  "dateModified": new Date().toISOString(),
+  "isPartOf": {
+    "@type": "Blog",
+    "name": "SightStudio 블로그",
+    "url": "https://sightstudio.dev/blog"
+  }
+};
 ---
 
 <Layout metadata={metadata}>
+  <!-- 카테고리 구조화된 데이터 -->
+  <script type="application/ld+json" set:html={JSON.stringify(categoryStructuredData)} />
+  
   <section class="px-4 md:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
     <Headline>{category.title}</Headline>
     <BlogList posts={page.data} />

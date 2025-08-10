@@ -57,16 +57,14 @@ const jsonLd = {
   "author": {
     "@type": "Person",
     "name": post.author || "SightStudio",
-    "url": "https://sightstudio.github.io"
+    "email": "sdm3285@gmail.com",
+    "url": "https://github.com/SightStudio"
   },
   "publisher": {
-    "@type": "Organization",
+    "@type": "Person",
     "name": "SightStudio",
-    "url": "https://sightstudio.github.io",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://sightstudio.github.io/images/logo.png"
-    }
+    "email": "sdm3285@gmail.com",
+    "url": "https://github.com/SightStudio"
   },
   "mainEntityOfPage": {
     "@type": "WebPage",
@@ -74,7 +72,14 @@ const jsonLd = {
   },
   "articleSection": post.category?.title,
   "keywords": post.tags?.map(tag => tag.title).join(', '),
-  "timeRequired": `PT${post.readingTime || 1}M`
+  "timeRequired": `PT${post.readingTime || 1}M`,
+  "isPartOf": {
+    "@type": "Blog",
+    "name": "SightStudio 블로그",
+    "url": "https://sightstudio.dev/blog"
+  },
+  "inLanguage": "ko-KR",
+  "wordCount": post.content?.length || 0
 };
 ---
 

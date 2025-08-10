@@ -12,6 +12,7 @@ import SiteVerification from '~/components/common/SiteVerification.astro';
 import Analytics from '~/components/common/Analytics.astro';
 import BasicScripts from '~/components/common/BasicScripts.astro';
 
+
 // Comment the line below to disable View Transitions
 import { ClientRouter } from 'astro:transitions';
 
@@ -26,6 +27,32 @@ export interface Props {
 
 const { metadata = {} } = Astro.props;
 const { language, textDirection } = I18N;
+
+// 기본 웹사이트 구조화된 데이터
+const websiteStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "SightStudio 블로그",
+  "description": "🔥 네가 선택한 개발자다. 악으로 깡으로 버텨라.",
+  "url": "https://sightstudio.dev",
+  "publisher": {
+    "@type": "Person",
+    "name": "SightStudio",
+    "email": "sdm3285@gmail.com",
+    "url": "https://github.com/SightStudio"
+  },
+  "author": {
+    "@type": "Person", 
+    "name": "SightStudio",
+    "email": "sdm3285@gmail.com"
+  },
+  "dateModified": new Date().toISOString(),
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://sightstudio.dev/blog?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
 ---
 
 <!doctype html>
@@ -54,12 +81,15 @@ const { language, textDirection } = I18N;
     
     <!-- 사이트 공식성 강화 메타태그 -->
     <meta name="owner" content="SightStudio" />
-    <meta name="url" content="https://sightstudio.github.io" />
-    <meta name="identifier-URL" content="https://sightstudio.github.io" />
+    <meta name="url" content="https://sightstudio.dev" />
+    <meta name="identifier-URL" content="https://sightstudio.dev" />
     <meta name="directory" content="submission" />
     <meta name="coverage" content="Worldwide" />
     <meta name="distribution" content="Global" />
     <meta name="rating" content="General" />
+    
+    <!-- 기본 웹사이트 구조화된 데이터 -->
+    <script type="application/ld+json" set:html={JSON.stringify(websiteStructuredData)} />
     
     <!-- Comment the line below to disable View Transitions -->
     <ClientRouter fallback="swap" />

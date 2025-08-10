@@ -1,6 +1,6 @@
 site:
   name: SightStudio
-  site: 'https://sightstudio.github.io'
+  site: 'https://sightstudio.dev'
   base: '/'
   trailingSlash: false
 

@@ -29,9 +29,38 @@ const metadata = {
     type: 'blog',
   },
 };
+
+// 블로그 목록 페이지 구조화된 데이터
+const blogListStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "SightStudio 블로그",
+  "description": "🔥 네가 선택한 개발자다. 악으로 깡으로 버텨라.",
+  "url": "https://sightstudio.dev/blog",
+  "publisher": {
+    "@type": "Person",
+    "name": "SightStudio",
+    "email": "sdm3285@gmail.com",
+    "url": "https://github.com/SightStudio"
+  },
+  "author": {
+    "@type": "Person", 
+    "name": "SightStudio",
+    "email": "sdm3285@gmail.com"
+  },
+  "dateModified": new Date().toISOString(),
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://sightstudio.dev/blog?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
 ---
 
 <Layout metadata={metadata}>
+  <!-- 블로그 목록 구조화된 데이터 -->
+  <script type="application/ld+json" set:html={JSON.stringify(blogListStructuredData)} />
+  
   <section class="px-6 sm:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
     <BlogList posts={page.data} />
     <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
