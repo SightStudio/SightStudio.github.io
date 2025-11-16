@@ -1,0 +1,122 @@
+---
+title: 'MacOS에서 오라클 사용하기'
+publishDate: 2020-01-01T00:00:00Z
+description: '[Oracle] MacOS에서 오라클 사용하기'
+tags: ['Oracle', 'RDBMS']
+category: Develop
+draft: false
+---
+
+**사용 툴** : Intellij IDEA
+**선행 조건** : **[\[Docker For Mac\]](https://www.docker.com/products/docker-desktop)** 설치
+
+오라클 12c에 추가된 CDB와 PDB의 개념은 따로 설명하지 않는다.
+
+Docker에 자체에 대한 설명도 여기서 다루지는 않는다.
+
+* * *
+
+**우선 Oracle은 공식적으로 MacOS를 지원하지 않는다.**  
+RBD 사용시 주로 **Oracle**을 사용하는데, 이로인해 **MacOS** 유저의 불편이 이만저만이 아니다.
+
+  
+원래라면 VM을 깔아야하지만, **Docker**를 통해 좀 더 쉽게 문제를 해결해보자.
+
+대부분의 블로그가 **[\[wnameless/oracle-xe-11g-r2\]](https://hub.docker.com/r/wnameless/oracle-xe-11g-r2)** 이미지를 사용하여 이 방법을 설명하는데  
+이미 도커 허브에는 **[\[Oracle 12c 공식 이미지\]](https://hub.docker.com/_/oracle-database-enterprise-edition)** 가 있기 때문에 공식 이미지를 사용하였다.
+
+![](/images/blog/use-oracle-in-macos/img.png)
+
+* * *
+
+## 1\. 도커 이미지 다운 및 컨테이너 생성
+
+    docker pull store/oracle/database-enterprise:12.2.0.1
+    또는
+    docker pull store/oracle/database-enterprise:12.2.0.1-slim
+
+공식이미지에는 두가지가 있는데 둘중 하나를 받으면 된다.  
+slim 버전은 기본 이미지에서 일부 기능을 제거하고 가볍게 만든 버전이다.  
+여기서는 **slim** 버전을 사용하였다.
+
+![](/images/blog/use-oracle-in-macos/img_1.png)
+
+다음 명령어를 통해 컨테이너를 생성한다.    
+DB저장 폴더 경로는 각자의 로컬 PC 경로이다.  
+
+```shell
+docker run                          \
+  -p 3307:1521                      \
+  -v '[DB저장용 폴더 - 절대경로]':/ORCL  \
+  --env DB_SID=MY_SID               \
+  --env DB_PDB=MY_PDB               \
+  --env DB_DOMAIN=oracledb.my.local \
+  --env TZ=Asia/Seoul               \
+  --name oracledb                   \
+  -it -d                            \
+  'store/oracle/database-enterprise:12.2.0.1-slim'
+```
+
+정상적으로 실행이되면 3307포트에 오라클 컨테이너가 띄워질 것이다.  
+컨테이너를 재시작해도 데이터가 남아있을 수 있도록 볼륨(-v) 옵션을 줫다.
+
+다음은 실행 터미널 화면이다.
+
+![](/images/blog/use-oracle-in-macos/img_2.png)
+
+도커 컨테이너는 **인텔리제이** 또는 데스크탑 상단 **도커 아이콘 > Dashboard**에서 컨테이너를 켜고 끌 수 있다.
+
+![](/images/blog/use-oracle-in-macos/img_3.png)
+
+## 2\. 컨테이너 접속 후 유저 생성
+
+1번 돋보기를 눌러, 2번에 database를 입력하고, 3번에 좌측 텝을 클릭하고 추가 버튼을 누른다.
+
+![](/images/blog/use-oracle-in-macos/img_4.png)
+
+그리고 좌측 추가 버튼을 눌러 오라클을 추가 하고 아래 사진과 같이 입력한다.
+
+![](/images/blog/use-oracle-in-macos/img_5.png)
+
+오라클은 이미지의 기본 계정은 다음과 같다. 이 계정으로 먼저 접속한다.  
+**Username** : system  
+**Password** : Oradoc\_db1
+
+그러면 다음과 같이 접속이 완료된 것을 볼 수 있다.
+
+![](/images/blog/use-oracle-in-macos/img_6.png)
+
+이제 따로 각자 계정을 생성하거나, 적절히 커스터마이징 하여 사용하면 된다.
+
+필자는 CLI로 바로 실행하기 보다는 **docker-compose**로 DB들을 따로 기술해놓고 실행한다.  
+이렇게 기술해놓으면 컨테이너 관리를 더 편하게 할 수 있다.
+
+```yaml
+# docker-compose.yml
+version: '3'
+services:
+  oracle_server:
+    container_name: oracle-db
+    image: 'store/oracle/database-enterprise:12.2.0.1-slim'
+    ports:
+      - '3307:1521'
+    volumes:
+      - /Users/seoldongmin/Desktop/myProject/db/oracle:/ORCL
+    environment:
+      - DB_SID=MY_SID
+      - DB_PDB=MY_PDB
+      - DB_DOMAIN=oracledb.my.local
+      - TZ=Asia/Seoul
+
+  mysql_server:
+    container_name: mysql-db
+    image: 'mysql:8'
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_DATABASE=jpa_group_concat
+      - MYSQL_ROOT_PASSWORD=bksul40
+      - MYSQL_USER=sight
+      - MYSQL_PASSWORD=bksul40
+      - TZ=Asia/Seoul
+```
