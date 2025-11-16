@@ -14,6 +14,10 @@ export const headerData = {
       href: getPermalink('develop', 'category'),
     },
     {
+      text: '인생',
+      href: getPermalink('life', 'category'),
+    },
+    {
       text: '스터디',
       href: getPermalink('study', 'category'),
     },
