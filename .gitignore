@@ -24,3 +24,5 @@ pnpm-lock.yaml
 .astro
 
 .idea/**
+
+.git/**
