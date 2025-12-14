@@ -1,0 +1,312 @@
+---
+title: 'WebP에 대해 알아보자'
+publishDate: 2021-04-28T00:00:00Z
+description: 'Google에서 개발한 WebP 이미지 포맷의 구조, 압축 방식, 장단점에 대한 상세한 분석'
+tags: ['WebP', 'Image Format', 'Compression', 'Performance', 'tistory-backup']
+category: Develop
+draft: false
+image: ~/assets/images/thumbnail/webp-format-introduction.png
+---
+
+## **배경**
+
+사이드 프로젝트에 **WebP**를 적용해볼 일이 있어 적용하면서 공부했던 내용을 정리하였습니다.
+
+생각보다 내용이 꽤 문서를 보는데도 정리하기가 어렵네요.
+
+최대한 간단하게 정리하였습니다.
+
+## **WebP란?**
+
+webp는 2010년 구글에서 공개한 이미지 포맷입니다. 기존의 **JPEG 포맷**을 대체하기 위해 나왔으며,
+
+현재는 **JPEG** 뿐 아니라 **PNG**, **GIF** 그리고 **Animated GIF** **(움짤)**도 지원합니다.
+
+(당연히 JPEG에서 지원하지 않는 **Transparency** 또한 지원합니다. **[alpth channel]**)
+
+손실 압축, 무손실 압축 모두 지원되며, 공식문서에 따르면
+
+> webp는 동일 이미지 기준 **JPEG** 대비 **25 - 34%**, **PNG** 대비 **26%** 적은 용량을 가지고 있습니다.
+
+## **WebP 구조**
+
+### **1. RIFF 컨테이너**
+
+WebP는 윈도우에서 개발한 멀티미디어 파일 형식인 [[RIFF 컨테이너]](http://docs.microsoft.com/en-us/windows/win32/xaudio2/resource-interchange-file-format--riff-)를 사용합니다.
+
+이외에도 WAVE, AVI 가 이 컨테이너를 사용합니다.
+
+RIFF는 청크(chunk)라는 블록들이 트리 형태의 구조로 이루어져 있습니다.
+
+![](/images/blog/webp-format-introduction/img.png)
+
+바이너리 뷰어로 보았을 때 RIFF 스펙에 따라 **파일 헤더**에 RIFF가 명시되어있는것을 확인 할 수 있습니다. **(4바이트)**
+
+그 뒤의 바로 32 bit unsigned integer(리틀 엔디안) 로 **파일의 크기**가 명시되어있습니다. **(4바이트)**
+
+바로 뒤 4바이트에는 Form Type이 붙어있습니다. 이 FormType를 통해
+
+WebP의 형태를 알 수 있습니다. [[공식 문서]](https://developers.google.com/speed/webp/docs/riff_container#webp_file_header)
+
+이걸 통해 RIFF 컨테이너 기반 파일의 총 크기는
+
+> 위의 추출한 파일 크기 + 4 바이트 (파일 크기명시) + 4 바이트( 'R', 'I', 'F', 'F')
+
+인 것을 알 수 있습니다.
+
+맨 앞의 4글자 ASCII 코드 'R', 'I', 'F', 'F' 는 데이터 포맷을 구분할때 사용되는 [[FourCC]](https://en.wikipedia.org/wiki/FourCC) 라고 부릅니다.
+
+아래는 webp에서 사용하는 RIFF 컨테이너 구조 사진입니다.
+
+![](/images/blog/webp-format-introduction/blob.jpg)
+
+### **2. Lossy Compression**
+
+![](/images/blog/webp-format-introduction/img_9.png)
+![](/images/blog/webp-format-introduction/img_10.png)
+
+(손실 압축에서 webp는 알파채널을 지원하기 위해 확장된 webp 포맷[VP8X] 형태를 사용합니다. [[문서]](https://developers.google.com/speed/webp/docs/riff_container#simple_file_format_lossy))
+
+**WebP**는 손실** **압축**에서 VP8 코덱을 그대로 사용합니다.
+
+VP8은 블록기반 코덱이며 **key frame encoding** 을 사용합니다.
+
+아래와 같은 특징을 가지고 있습니다.
+
+#### **2-1. Macro Block**
+
+VP8은 블록 기반 코덱이기 때문에 인코더는 이미지를 작은 단위의 블록으로 나누는 것부터 시작합니다.
+
+이렇게 나누어진 블록들은 **macro block** 이라고 부릅니다.
+
+WebP에서 각 매크로 블록은 각각 16x16의 루마 픽셀 하나 **(Y, 밝기 채널)** 와
+
+두개의 8x8의 크로마 픽셀 **(U, V - 컬러 채널)** 로 이루어져 있습니다.
+
+이렇게 나누어진 매크로 블록 내에서 인코더는 중복 동작과 색상을 예측할 수 있습니다. (prediction)
+
+![](/images/blog/webp-format-introduction/img_1.png)
+
+#### **2-2. VP8 Intra Prediction Mode**
+
+이후 Intra Prediction 모드에서는 인코더는 16x16의 루마 픽셀을 4x4 서브 블록으로 나눈뒤
+
+prediction을 합니다. 이 prediction에는 아래의 4가지 방식이 혼용되어 블록에 적용됩니다.
+
+**H_PRED** (horizontal prediction).
+
+- 블록의 왼쪽 컬럼을 복사 **(Column L)**
+
+**V_PRED** (vertical prediction)
+
+- 블록의 위쪽 row 전체를 복사 **(Row A)**
+
+**DC_PRED** (DC prediction).
+
+- 위의 행과 왼쪽에 있는 컬럼의 픽셀 평균값을 사용 ( **AVG (Col L + ROW A)** )
+
+**TM_PRED** (TrueMotion prediction).
+
+- 좌측 컬럼과, 위의 열뿐 아니라 왼쪽위에 있는 대각선 방향의 픽셀 **(pixel P)** 도 함께 사용하여 예측
+
+  P부터 A까지의 차이(difference)가 L부터 target pixel까지 전파됨
+
+![](/images/blog/webp-format-introduction/img_2.png)
+
+#### **2-3. Adaptive Block Quantization**
+
+WebP는 화질을 개선하기 위해 이미지를 눈에 띄게 유사한 기능을 가진 영역으로 분할됩니다. (세그먼트)
+
+이렇게 나뉘어진 각 세그먼트들에 대한 압축 정도는 개별로 진행됩니다.
+
+압축 과정은 아래와 같으며, 이 방식은 JPEG와 유사합니다.
+
+![](/images/blog/webp-format-introduction/img_3.png)
+
+[**출저 (medium)**](https://medium.com/@duhroach/how-webp-works-lossly-mode-33bd2b1d0670)
+
+quantization (양자화) 과정에서만 데이터가 유실될 수 있습니다. 즉, 나머지는 lossless..!
+
+![](/images/blog/webp-format-introduction/img_4.png)
+
+여기서도 JPEG와 Lossy Webp의 차이점이 있습니다.
+
+마지막 statistical compression**(entropy coding)** 과정에서
+
+> JPEG는 허프만 인코딩 기법을 사용하지만, WebP는 부울 산술 인코딩 기업을 사용합니다.
+
+이 기법은 허프만 대비 5-10% 더 높은 압축률을 가집니다.
+
+[[문서]](http://static.googleusercontent.com/media/research.google.com/en/us/pubs/archive/37073.pdf) VP8은 압축된 데이터들을 1과 0으로 매핑하여 유사 허프만 트리 구조에 저장해서 사용합니다.
+
+### **3. Lossless Compression**
+
+![](/images/blog/webp-format-introduction/img_5.png)
+
+[[공식 문서]](https://developers.google.com/speed/webp/docs/riff_container#simple_file_format_lossless)
+
+**WebP는 무손실 압축**에서 여러가지 기술들을 적용한 후, **entropy coding**을 적용합니다.
+
+**Entropy coding** 이전에는 아래와 같은 4가지 **Transform**이 적용됩니다.
+
+#### **3-1. Predictor (Spatial) Transform**
+
+**Spatial prediction**(공간 예측)은 인접 픽셀들은 자주 연관되어 있다는
+
+사실을 이용하여 엔트로피를 줄이는데 사용합니다.
+
+**Predictor (Spatial) Transform (****예측 변수(공간) 변환) 은**
+
+위의 손실 압축단계에서 설명한 **VP8** **Intra Prediction**과 비슷한 역할을 합니다.
+
+#### **3-2. Color (de-correlation) Transform**
+
+**Color **Transform****(색상 변환)의 목적은 각 픽셀의 R, G, B 값을 [[decorrelate]](https://en.wikipedia.org/wiki/Decorrelation) 시키는데 있습니다.
+
+**녹색(G**) 값을 그대로 유지하고, **빨간색(R)** 은 녹색을 녹색값 기준으로 변환하고
+
+**파란색(B)**은 녹색값 기준으로 면저 변환한 다음, 빨간색 값으로 변환합니다.
+
+#### **3-3. Color Indexing (plalette) Transform**
+
+이미지의 픽셀값이 종류가 적다면 color index table을 만들어 픽셀값을 인덱싱합니다.
+
+이 형태는 GIF나 PNG 에서 이미 사용하고 있습니다. webp 무손실 압축에서는
+
+픽셀의 개수가 256개 보다 작으면 color table을 만들어 사용힙니다.
+
+[[예시] GIF 에서 Global Color table](https://en.wikipedia.org/wiki/GIF#Example_GIF_file)
+
+무손실 압축에서 엔트로피 코딩은 LZ77-허프만 코딩의 변형을 사용합니다.
+
+#### **3-4. LZ77 Backward Reference**
+
+![](/images/blog/webp-format-introduction/img_6.png)
+
+[[**LZ77]**](https://en.wikipedia.org/wiki/LZ77_and_LZ78#:~:text=LZ77%20and%20LZ78%20are%20the,%2C%20LZSS%2C%20LZMA%20and%20others.)는 무손실 압축 알고리즘 중 하나이고, Backward references 는 길이와 거리코드의 조합입니다.
+
+Length는 scan한 line 상에서 pixel이 얼마나 복사될지를 나타내고
+
+distance는 복사될 pixel이 이전에 어디있었는지를 기록합니다.
+
+이 length와 distance가 LZ77 prefix coding을 통해 저장됩니다.
+
+webp 공식문서에서는 문자로 매칭하며 예시를 들었지만, 실제론 문자가 아닌 픽셀단위로 적용됩니다.
+
+(기존의 LZ77 허프만 코딩은 바이트 단위)
+
+PNG의 [[Delfate]](https://en.wikipedia.org/wiki/Deflate) 는 LZ77의 변형인 [[LZSS]](https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Storer%E2%80%93Szymanski) 알고리즘과 허프만코딩을 사용합니다.
+
+(내용이 어렵네요.. 음..)
+
+#### **3-5. Coloc Cache Coding**
+
+![](/images/blog/webp-format-introduction/img.jpg)
+
+무손실 압축에서 webp는 새 픽셀을 재구성하기 위해 이미 표시된 영상 조각을 사용합니다.
+
+일치하는 픽셀이 없는 경우 로컬 팔레트에서 가져와 사용합니다.
+
+32개의 최근 사용된 색을 캐싱하며, LRU와 유사하게 업데이트 합니다.
+
+### **4. Animated WebP**
+
+![](/images/blog/webp-format-introduction/img_7.png)
+
+[[문서]](https://developers.google.com/speed/webp/docs/riff_container#animation)
+
+애니메이션 webp는 webp의 Extended File Format을 사용하기 때문에 WEBPVP8X로 명시되어있습니다.
+
+애니메이션은 **ANIM 청크**와 **ANMF 청크**로 구성되어있는데요.
+
+**ANIM 청크**는 애니메이션에 대한 두가지 글로벌 정보를 가지고 있습니다.
+
+1. 배경색 ARGB 값
+
+2. Loop Count
+
+애니메이션이 얼마나 반복될지 횟수를 나타내고 0일 경우, 무한반복입니다.
+
+(예시: 위의 사진은 ANIM과 ANMF 사이 값 중 뒤에 4바이트가 모두 0이기 때문에 무한반복입니다.)
+
+**ANMF 청크**는 각 프레임별 이미지에 대한 데이터를 가지고 있습니다.
+
+![](/images/blog/webp-format-introduction/img_8.png)
+
+## **단점**
+
+이렇게만 보면 webp를 무조건 써야할 것처럼 보이지만 몇가지 단점들이 존재합니다.
+
+### **Animated WebP의 CPU 사용량**
+
+[구글 공식 문서](https://developers.google.com/speed/webp/faq#why_should_i_use_animated_webp)에 따라 디코딩시 CPU 자원이 GIF 대비 1.5 ~ 2.2배정도 더 사용됩니다
+
+### **WebP 지원 및 하위 호환성에 따른 최적화 이슈**
+
+WebP는 2010년에 발표되었지만 최근에서야 지원이 점점 늘어나는것으로 보입니다.
+
+특히 IOS의 경우는 IOS 14에서야 webp 포맷을 지원합니다.
+
+그로인해 성능 자체가 좋더라도 PNG, JPG, GIF 보다 네이티브적인 최적화를 지원받지 못해
+
+성능적으로 손해를 보는 경우도 있습니다.
+
+[github.com/dreampiggy/ModernImageFormatBenchmark](https://github.com/dreampiggy/ModernImageFormatBenchmark)
+
+ [dreampiggy/ModernImageFormatBenchmark
+
+A simple benchmark for modern image formats on mobiles, including WebP/HEIC/BPG/FLIF/AVIF - dreampiggy/ModernImageFormatBenchmark
+
+github.com](https://github.com/dreampiggy/ModernImageFormatBenchmark)
+
+다음 벤치마크 처럼 IOS의 경우 PNG, GIF, JPG 같은경우 애플에서 공식적으로 지원하는 ImageIO에
+
+하드웨어 가속**(GPU)**을 사용하여 인코딩, 디코딩 시간을 대폭 감소시킨데 반해,
+
+webp와 같은 다른 포맷의 경우 이부분에 대해 네이티브적인 지원받지 못해
+
+CPU만을 사용하여 인코딩, 디코딩 시간이 더 오래걸리는 것을 볼 수 있습니다.
+
+IOS 14 이후로는 해결 될 것으로 보이지만 하위호환성을 생각하면 시간이 더 지나야 해결될듯하네요 ㅎㅎ
+
+[[관련 이슈]](http://github.com/SDWebImage/SDWebImage/issues/3041)
+
+나머지 지원 브라우저들은 [문서](https://developers.google.com/speed/webp/faq)에 기재되어있습니다.
+
+### **압축률에 따른 encoding/decoding time**
+
+압축률이 높아지면 encoding/decoding 시간이 늘어납니다.
+
+하위 호환성을 위해 원본이미지로 fall-back 시켜준다고 감안 했을 때
+
+네트워크 부하를 줄이는 것과 압축시간과 trade-off 되는걸로 보입니다.
+
+## **마치며**
+
+호기심에 찾아봤는데 이미지는 생각보다 너무 어렵네요.
+
+신호처리 기반 지식이 많이 부족하다는 생각이 듭니다.
+
+만족스럽게 정리하지는 못했으니 추후에 더 공부해야겠네요.
+
+그래도 WebP의 작동방식을 어느정도 알게되어 다행이였습니다.
+
+공부할게 많군요!
+
+* * *
+
+## **Reference**
+
+**WebP 문서**
+
+[developers.google.com/speed/webp](https://developers.google.com/speed/webp)
+
+**MSDN - RIFF 문서**
+
+[docs.microsoft.com/ko-kr/windows/win32/multimedia/resource-interchange-file-format-services?redirectedfrom=MSDN](https://docs.microsoft.com/ko-kr/windows/win32/multimedia/resource-interchange-file-format-services?redirectedfrom=MSDN)
+
+[docs.microsoft.com/en-us/windows/win32/xaudio2/resource-interchange-file-format--riff-](https://docs.microsoft.com/en-us/windows/win32/xaudio2/resource-interchange-file-format--riff-)
+
+**VP8 코덱**
+
+[static.googleusercontent.com/media/research.google.com/en/us/pubs/archive/37073.pdf](http://static.googleusercontent.com/media/research.google.com/en/us/pubs/archive/37073.pdf)
