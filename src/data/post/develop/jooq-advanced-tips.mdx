@@ -1,0 +1,109 @@
+---
+title: 'jOOQ 를 좀 더 알아보자'
+publishDate: 2022-01-03T00:00:00Z
+description: 'jOOQ 고급 사용법과 커스터마이징 팁들 - Prefix 생성, Multiple Row Insert, Dynamic Condition, Slow Query 탐지'
+tags: ['jOOQ', 'Java', 'Database', 'SQL', 'ORM', 'QueryDSL', 'tistory-backup']
+category: Develop
+draft: false
+image: ~/assets/images/thumbnail/jooq-advanced-tips.png
+---
+
+[[입문] jOOQ에 대해 알아보자](https://sightstudio.tistory.com/54) 에 대해 글을 쓴지 1년이 지났습니다.
+
+jOOQ에서 이것저것 커스텀을 해서 썼었는데 딱히 정리를 하지 않아서 필자가 자주 사용하는
+
+일부 커스텀한 부분이나 겪었던 팁들을 정리하고자 합니다.
+
+코드는 [[여기]](https://github.com/SightStudio/blog-code/tree/develop/jooq-advanced) 서 확인 할 수 있습니다.
+
+## **1. jOOQ는 앞으로 JAVA 11 부터**
+
+Jooq는 **3.15** 부터 Java 11이 요구됩니다.  **[2021.07 release]**
+
+자주 사용되는 jOOQ용 [gradle 플러그인](https://github.com/etiennestuder/gradle-jooq-plugin/releases)도 Java 8을 드랍하고 최소사양이 Java 11 이 되면서
+
+앞으로 jOOQ를 사용하려면 이에 대응해야합니다.
+
+기업용은 8까지 지원하지만, 플러그인에서 지원을 드랍했기 때문에 설정 삽질을 조금 해야할것으로 보이네요.
+
+![](/images/blog/jooq-advanced-tips/img.png)
+![](/images/blog/jooq-advanced-tips/img_1.png)
+
+## **2.  jOOQ DSL에 전용 Prefix  생성**
+
+[[코드 링크]](https://github.com/SightStudio/blog-code/blob/develop/jooq-advanced/jooq-custom/src/main/java/jooq/custom/generator/JPrefixGeneratorStrategy.java)
+
+jOOQ를 통해 생성되는 **DSL**에는 기본 설정 없이는 따로 Prefix가 생성되지 않습니다.
+
+[[QueryDSL](https://github.com/querydsl/querydsl/tree/master/querydsl-sql)]을 사용하셨던 분들은 **"Q + 테이블명" class** 으로 전용 DSL을 사용했던 편리함을 겪으셨을 텐데요.
+
+Jooq에서는 **DefaultGeneratorStrategy**를 상속받음으로써 이를 내가 원하는데로 DSL을 커스텀 할 수 있습니다.
+
+보통 QueryDSL의 Q 클래스처럼 Jooq도 앞에 J를 붙여서 DSL을 만들도록 설정합니다.
+
+![](/images/blog/jooq-advanced-tips/img_2.png)
+![](/images/blog/jooq-advanced-tips/img_3.png)
+
+## 3. Multiple Row Insert
+
+[[코드 링크]](https://github.com/SightStudio/blog-code/blob/develop/jooq-advanced/src/main/java/com/sightstudio/jooq/app/domain/author/AuthorRepository.java#L91)
+
+JPA에서는 할 수 없었던 다중 row insert 입니다.
+
+다음과 같이 하나의 SQL로 여러개의 Row를 Insert 할 때
+
+![](/images/blog/jooq-advanced-tips/img_4.png)
+
+**jOOQ 3.15** 버전 이전까지는 다음과 같이 일일히 루프를 돌면서 코드를 작성해야만 했습니다.
+
+![](/images/blog/jooq-advanced-tips/img_5.png)
+
+Java 8일 경우 10에 추가된 **타입추론**도 사용이 불가능해서 insert시 제네릭을
+
+일일히 나열해야되는 불편함이 있었습니다. [[관련 Jooq 이슈]](https://github.com/jOOQ/jOOQ/issues/6604)
+
+jOOQ 3.15 부터는 아래처럼 새로 추가된 valueOfRows 를 통해 간략화 할 수 있습니다.
+
+![](/images/blog/jooq-advanced-tips/img_6.png)
+
+(이부분은 막상 적고보니 Java 10에 추가된 타입 추론이 해결해준 느낌이네요 ㅎㅎ)
+
+## 4. Dynamic Condition
+
+[[ 코드 링크 ]](https://github.com/SightStudio/blog-code/blob/develop/jooq-advanced/src/main/java/com/sightstudio/jooq/config/jooq/BaseJooqRepository.java#L14)
+
+MyBatis 나 QueryDSL 등에서는 조건등을 동적으로 붙일 수 있는 Dynamic SQL을 지원합니다.
+
+jOOQ 또한 지원합니다! where절에 **DSL.noCondition()**을 리턴하면 해당 조건은 제외됩니다.
+
+필자는 자주 쓰이는 것들은 인터페이스에 default 메서드를 통해 공통으로 사용합니다.
+
+![](/images/blog/jooq-advanced-tips/img_7.png)
+
+![](/images/blog/jooq-advanced-tips/img_8.png)
+
+## 5 . Slow Query 탐지
+
+[[코드 링크]](https://github.com/SightStudio/blog-code/blob/develop/jooq-advanced/src/main/java/com/sightstudio/jooq/config/jooq/PerformanceListener.java)
+
+**ExecuteLister**를 사용하면 쿼리 실행 시점과 종료 시점을 체크 할 수 있습니다.
+
+이를 통해 Slow 쿼리를 탐지 할 수도 있습니다.
+
+(다만 이 기능은 jOOQ와 같은 어플리케이션 레벨이 아닌 다른 인프라나 미들웨어 관리하는게 더 좋아보입니다)
+
+![](/images/blog/jooq-advanced-tips/img_9.png)
+
+실험을 위해  다음과 같은 쿼리를 실행한다.
+
+![](/images/blog/jooq-advanced-tips/img_10.png)
+
+![](/images/blog/jooq-advanced-tips/img_11.png)
+
+이상 jOOQ를 사용하면서 겪은 팁이며, 추가로 생각나는 점이 있으면
+
+계속 업데이트하도록 하겠습니다.
+
+이상으로 ORM은 아니지만 막상 써보니 나쁘지 않은 jOOQ 였습니다.
+
+후속: [Jooq를 JPA와 같이 써보자](https://sightstudio.tistory.com/68)
