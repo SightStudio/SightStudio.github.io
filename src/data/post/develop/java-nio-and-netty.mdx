@@ -1,0 +1,221 @@
+---
+title: 'Java NIO와 Netty'
+publishDate: 2020-08-12T00:00:00Z
+description: 'Java NIO, Netty와 Spring WebFlux에서 ThreadLocal을 대신하는 Context에 대한 정리'
+tags: ['Java', 'NIO', 'Netty', 'Spring WebFlux', 'tistory-backup']
+category: Develop
+draft: false
+image: ~/assets/images/thumbnail/java-nio-and-netty.png
+---
+
+# **NIO, 그리고 Netty**
+
+Spring Webflux를 사용하는 상황이 와서 공부하게 되었다.
+
+`Spring Boot`도 2.x 버전부터 `Webflux` 선택시 내장 톰캣이 아닌 Netty를 기본설정으로 잡는다.
+Netty는 NIO 기반 네트워크 어플리케이션 프레임워크이기 때문에 NIO도 같이 정리하였다.
+
+## **NIO란?**
+
+**Java New Input/Output**의 약자로 자바 4부터부터 지원된 생각보다 오래된 기능이며,
+자바 7부터는 NIO2가 지원되었다.
+
+다음은 NIO와 이전 IO 방식의 데이터 처리 비교이다.
+이전 IO는 BIO라고 칭한다.
+
+![](/images/blog/java-nio-and-netty/img.png)
+
+## **BIO**
+
+기존 자바 I/O는 가상머신의 한계로 OS의 커널 버퍼를 직접적으로 핸들링 할 수 없었다.
+왜냐하면 소켓이나 파일에서 Stream이 들어오면 `커널 버퍼`에 데이터를 써야하는데
+당시에는 이를 코드 레벨에서 접근할 수 있는 방법이 없었기 때문이다.
+
+그 대안으로 BIO의 경우, JVM이 커널에게 `시스템 콜`을 사용하게 하여 문제를 해결했다.
+하지만 이 과정에서 JVM은
+
+`JVM -> 커널-> 시스템 콜 -> 디스크 컨트롤러 -> DMA가 커널버퍼로 복사 -> JVM 버퍼에 복사`
+
+의 긴 과정을 거치게 된다.
+
+이때 발생할 수 있는 문제로는
+
+    1.  JVM으로 내부 버퍼 복사시 CPU가 관여 -> CPU 오버헤드
+
+    2. 복사된 Buffer는 활용 후 GC 대상이됨. -> **Stop-the-World**로 인한 성능 저하
+
+    3. 복사중인 I/O 요청 스레드는 블로킹 상태 -> 처리속도 저하
+
+가 있다.
+
+특히 3번째의 블로킹 이슈가 주요 문제였다.
+Stream은 단방향으로 읽기 때문에 읽을 때와 쓸 때 `InputStream`과 `OutputStream`으로
+구분하여 사용하였고, 읽고 쓰는 작업이 다 끝날때 까지는 아무것도 할 수 없었다.
+
+또한 자바는 C와 C++ 스레드와는 다르게 한단계의 추상화 레이어가 더 존재하기 때문에
+이 둘보다 스레드 생성에 시간이 오래걸렸으며, 클라이언트가 서버에 접속 할 경우에는 앞서 접속한
+클라이언트의 스레드가 다 만들어질때 까지 기다려야 했기 때문에 처리속도가 처하되었다.
+(그래서 스레드를 미리 만들어 pool 형식으로 사용하는것 같다.)
+
+## **NIO**
+
+자바 1.3 이후 부터 JVM에 통일된 인터페이스가 도입되어, 각 OS별 `커널 버퍼`에 접근 할 수 있게 되었다.
+
+IO와 NIO 모두 Blocking 모드를 지원하지만, 블로킹을 빠져나오기 위한 방법에는 차이가 있다.
+IO는 오직 Stream을 닫는 것으로민 블로킹을 빠져나올 수 있지만, NIO는 Selector를 통해서 이를 해결 할 수 있다.
+
+### 셀렉터
+
+![](https://user-images.githubusercontent.com/50672087/83237115-a1054200-a1cf-11ea-9b2e-e22d3a5c5e56.png)
+
+`java.nio.channels.Selector`는 자바상에서의 **논블로킹 I/O** 구현의 핵심으로써, **Multiplex/IO **Select****와 같다.
+**Select**는 시스템 이벤트 통지 API를 사용하여 하나의 스레드로 동시에 많은 IO를 담당할 수 있다.
+
+    시스템 이벤트 통지 API란 Linux의 Select()와 Epoll()과 같이
+    다중 I/O를 처리하는 멀티플렉싱 방식의 API를 말한다
+
+**netty**의 경우, 리눅스 위에서 작동할 경우, 자동적으로 **Select**가 아닌 **Epoll**을 사용한다.
+
+**Select**와 **Epoll** 모두 시스템 콜이다.
+
+간단한 차이를 설명하자면, 소켓을 열면 **파일 디스크럽터**라는 unsigned int 형식의 **소켓 ID**를 부여 한다.
+
+**Select**의 경우 루프를 돌면서 파일 디스크럽터들의 변화를 감시하는 반면,
+
+epoll은 콜백형식으로 관리한다. **즉, epoll이 더 빠르다.**
+
+### **네티 소개**
+
+하지만 위와 같이 NIO를 통해 Low Level API를 직접 이용하면 코드의 복잡성이 심화된다는 문제가 있다.
+또한 그걸 다룰 고급 개발자들에게만 의존하게 될 수 밖에 없다. 그래서 Netty가 등장하였다.
+
+### **네티 핵심 컴포넌트**
+
+네티는 다음과 같이 4개의 주요 요소로 구성되어있다.
+
+*   **Channel**
+    *   채널은 자바 NIO에 기본 구조인 그 Channel이다. 네티에서는 데이터를 위한
+        운송 수단으로 사용되고, 네티가 자동으로 Channel을 열거나 닫아주기 때문에 직접
+        구현할 필요는 없다.
+*   **CallBack**
+    *   콜백 또한 기존에 우리가 알고 있는 콜백함수와 똑같다. 네티가 이벤트를 처리할 때
+        내부적으로 콜백을 트리거하는데, 콜백이 발생하면 내부에서는
+        `ChannelHandler` 인터페이스를 구현함으로써 이벤트를 처리할 수 있다.
+*   **Future**
+
+    *   **Future**는 작업이 완료되면 Application에 알리는 방법중 하나이다.
+        이 객체는 비동기 작업의 결과를 담는 역할을 하며, 이를 `placeholder`라고 부른다.
+    *   JDK 자체에서 이와같은 역할을하는 `java.util.concurrent.Future` 인터페이스를 제공하지만,
+        수동으로 작업 여부를 확인하거나, 완료 전까지 블로킹하는 기능만 있었다.
+    *   그래서 네티는 자체적으로 `ChannelFuture`를 사용하여 비동기 작업을 자동으로 완료되도록 구현하였다.
+
+    `ChannelFuture`에는 `ChannelFutureListener`인스턴스를 하나 이상 등록할 수 있으며,
+    작업이 완료되면 이 Listener들이 호출되며 처리 성공 유무를 확인할 수 있다.
+    이런 메커니즘을 통해 작업 완료를 수동으로 확인하거나, 블로킹 하지 않아도 된다.
+*   이 덕분에 Netty의 모든 OutBound 작업은 ChannelFuture를 반환하며, 진행을 블로킹하지 않는다.
+*   **Event 와 Handler**
+    *   네티는 작업의 상태 변화를 알리기 위해 고유한 이벤트루프를 사용하며, 발생한 이벤트를
+        기준으로 적절한 동작을 트리거 할 수 있다.![](https://user-images.githubusercontent.com/50672087/83243137-753a8a00-a1d8-11ea-96a6-b15063be353b.png)
+    *   다음과 같은 설계에서 한 Channel의 입출력이 동일한 스레드에서 처리되기 때문에 동기화가 필요 없다.
+        그리고 비동기 논블로킹 시에는 하나의 이벤트 루프가 여러개의 Channel과 연결될 수 있다.
+
+### **네티의 Thread 관리**
+
+*   **1\. 비동기**
+    비동기 방식의 경우에는 1 Event Loop가 여러 Channel을 처리한다.![](https://user-images.githubusercontent.com/50672087/83253259-a9697700-a1e7-11ea-842e-79f7db225131.png)
+*   **2\. 동기**
+    동기 방식의 경우에는 1 Event Loop가 1 Channel을 처리한다.![](https://user-images.githubusercontent.com/50672087/83253394-dddd3300-a1e7-11ea-8b8d-a8fa596d8edc.png)
+
+### **기타 특징**
+
+*   **제로 카피**
+
+*   현재 NIO와 Epoll 전송에서만 이용가능한 기능으로써, 파일 시스셈의 데이터를 커널 공간에서
+    사용자 공간으로 복사하는 과정을 생략한다.
+
+    이 기능 덕분에 위의 BIO에서 설명할때 처럼 버퍼를 복사해서 GC 대상이 되는 것을 막을 수 있다.
+    덕분에 리눅스 상에서 과부하 조건시에 성능상의 이점을 가져갈 수도 있다,
+
+과거에 우연히 써놓은 글을 발견하여 이곳으로 다시 옮겨보았습니다.
+
+틀린 부분은 지적해주시면 감사하겠습니다!
+
+### **Reference**
+
+[wikibook.co.kr/netty-in-action/](https://wikibook.co.kr/netty-in-action/)
+
+ [네티 인 액션: Netty를 이용한 자바 기반의 고성능 서버 & 클라이언트 개발
+
+네티는 복잡한 네트워킹, 멀티스레드, 동시성을 관리하는 자바 기반 네트워킹 프레임워크로서, 반복적인 저수준 코드를 내부로 감춤으로써 비즈니스 논리를 분리하고 쉽게 재사용할 수 있게 해
+
+wikibook.co.kr](https://wikibook.co.kr/netty-in-action/)
+
+* * *
+
+## **의문점**
+
+#### **1.** **Spring Webflux**는 기존 **ThreadLocal**에 저장하던 데이터는를 어떻게 보관할까?
+
+기존의 전통적인 Thread Pool 방식은 1 요청 == 1 Thread 방식이기 때문에
+인증과 같은 사용자 데이터들을 **ThreadLocal**에 태워서 보냈다.
+
+
+그러나 이벤트 루프 기반의 Netty와 같은 아키텍처에서는 N개 요청 == 1 스레드이기 때문에
+
+**ThreadLocal**을 사용할 수 없다. 처음 웹플럭스를 배울때 이부분이 제일 궁금하였었다.
+
+대표적인 예시로 SpringMVC - Spring Security에서는 사용자 정보를 **SecurityContext**로 저장하고,
+이를 **SecurityContextHolder**로 감싸서 **ThreadLocal**에 저장하여 처리한다.
+
+하지만 webflux는 어떻게 처리할지 감이 잡히지 않았다.
+그래서 Spring 내부 코드를 보고 어떻게 구현되어있는지 비교해보았다.
+
+*   **SpringMVC : SecurityContextHolder** [\[코드\]](https://github.com/DeveloperHuang/Spring-Security-Source-Code/blob/master/core/src/main/java/org/springframework/security/core/context/SecurityContextHolder.java)
+
+![](https://user-images.githubusercontent.com/50672087/83247990-5a1f4880-a1df-11ea-964a-4e14c398d50b.png)
+
+주석을 보면 **SpringMVC**에서는 **SecurityContext**를 어떻게 저장할지를
+
+**SecurityContextStrategy** 라는 전략패턴으로 결정하는데
+
+별다른 설정이 없으면 **ThreadLocal**에 저장하는걸 볼 수 있다.
+
+*   **Spring Webflux : ReactiveSecurityContextHolder** [\[코드\]](https://github.com/spring-projects/spring-security/blob/5f905232cb3fb4789bc4d783757f8ed877a87d71/core/src/main/java/org/springframework/security/core/context/ReactiveSecurityContextHolder.java)
+
+![](https://user-images.githubusercontent.com/50672087/83248489-1842d200-a1e0-11ea-811b-87c9926fb259.png)
+
+동일한 역할을 하는 **ReactiveSecurityContextHolder**를 보면 **SecurityContext**가 아닌
+**Reactor**에 있는 **Context**라는 영역에 저장하는 것을 볼 수 있다.
+
+그래서 **Reactor-Core**의 **Context** [\[코드\]](https://github.com/reactor/reactor-core/blob/master/reactor-core/src/main/java/reactor/util/context/Context.java)를 보았더니
+
+![](https://user-images.githubusercontent.com/50672087/83249097-0ada1780-a1e1-11ea-9b1d-6d98203c2881.png)
+
+Reator환경에서 다음과 같이 추적이나 보안 토큰등에 사용하기 이상적인 **Context**가 존재하였다.
+그러나 주석을 보면 알 수 있듯이, 적은 수의 **key/value**만 저장하기를 권장하고 있고,
+한 **Context**당 **5개의 Key/value**가 넘으면 Map으로 복사되어 재할당 된다고 적혀 있었다.
+
+
+그래서 더 찾아보았더니...
+
+![](https://user-images.githubusercontent.com/50672087/83250625-673e3680-a1e3-11ea-884a-62595e760d2f.png)
+
+이런식으로 변수 5개 이하면 Context1, 2, 3.. 이런 식으로 변수 개수를
+
+따로 만들어 저장하고 5개가 넘어야만 `LinkedHashMap`에 저장하는 것을 알 수 있었다.
+
+왜 이렇게 만들었는지 찾아보았는데  [\[완련 PR\]](https://github.com/reactor/reactor-core/issues/1970)
+
+**Copy-On-Write** 전략을 통해 성능상의 이득을 보려고 이렇게 구현한 것이였다.
+
+**Reactor** 에서는 함수형 프로그래밍처럼 불변값을 유지하기 위해 값을 추가할때마다.
+
+기존의 값을 복사하여 사용하는데, Context내에 5개의 데이터를 저장 할 때까지는
+
+**Copy-On-Write 전략**을 통해 복사한것 처럼 속이고, 실제로 값을 복사하지 않는다.
+
+**즉 Context 내에서 한 요청에대해 5개 이상의 데이터를 저장하면, 성능상의 이슈가 발생할 수 있다.**
+
+마지막에 알게되었지만, Spring Webflux [\[도큐먼트\]](https://projectreactor.io/docs/core/release/reference/#context)에도 설명되어있었다.
+
+아무튼 결국 SpringMVC : ThreadLocal == Spring Webflux : Context 이다.
