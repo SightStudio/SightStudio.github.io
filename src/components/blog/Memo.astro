@@ -1,0 +1,30 @@
+---
+// Usage example in MDX:
+// import Memo from '~/components/blog/Memo.astro';
+// <Memo variant="success" title="아래의 메모">
+//   메모 내용
+// </Memo>
+
+export interface Props {
+  variant?: 'default' | 'info' | 'success' | 'warning';
+  title?: string;
+}
+
+const { variant = 'default', title } = Astro.props;
+
+const variantClass: Record<string, string> = {
+  default: 'bg-gray-50 border-gray-200 text-slate-700 dark:bg-slate-800/70 dark:border-slate-600 dark:text-slate-200',
+  info: 'bg-sky-50 border-sky-200 text-slate-700 dark:bg-sky-900/30 dark:border-sky-600 dark:text-slate-100',
+  success: 'bg-emerald-50 border-emerald-200 text-emerald-900 dark:bg-emerald-900/20 dark:border-emerald-500 dark:text-emerald-100',
+  warning: 'bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-900/30 dark:border-amber-500 dark:text-amber-100',
+};
+
+const classes = variantClass[variant] ?? variantClass.default;
+---
+
+<aside class={`my-6 rounded-2xl border px-4 py-3 sm:px-6 sm:py-4 shadow-sm ${classes}`}>
+  {title && <p class="font-semibold text-base sm:text-lg mb-2 leading-tight">{title}</p>}
+  <div class="prose prose-sm sm:prose-base dark:prose-invert prose-headings:font-semibold prose-p:my-1 prose-ul:my-1 prose-p:text-[inherit] prose-li:text-[inherit] prose-strong:text-[inherit]">
+    <slot />
+  </div>
+</aside>
