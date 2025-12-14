@@ -16,17 +16,17 @@ const indentStyle = (depth: number) => `margin-left:${Math.max(0, depth - 1) * 8
 {
   headings.length > 0 && (
     <>
-      {/* PC: 본문 왼쪽에 고정 (중앙에서 너무 멀지 않게) */}
-      <aside class="hidden lg:block fixed top-32 right-[max(1rem,calc(50%-45rem))] w-72 text-sm z-30">
-        <details class="sticky top-32 bg-white/90 dark:bg-zinc-900/90 backdrop-blur border p-4 rounded-xl shadow-lg" open>
+      {/* Desktop: Grid column with sticky card */}
+      <aside class="hidden lg:block text-sm text-slate-600 dark:text-slate-200">
+        <details class="sticky top-28 bg-white/95 dark:bg-zinc-900/90 backdrop-blur border border-slate-200 dark:border-slate-700 p-4 rounded-2xl shadow-lg w-72 xl:w-80" open>
           <summary class="flex items-center justify-between cursor-pointer select-none">
             <span class="font-semibold">목차</span>
             <span class="text-xs text-slate-500">접기</span>
           </summary>
-          <ul class="space-y-1 mt-2">
+          <ul class="space-y-2 mt-2">
             {headings.map((h) => (
               <li class={`transition-colors ${indentClass(h.depth)}`} style={indentStyle(h.depth)}>
-                <a href={`#${h.slug}`} class={`hover:underline block leading-snug ${headingTextClass(h.depth)}`}>
+                <a href={`#${h.slug}`} class={`hover:text-primary block leading-snug ${headingTextClass(h.depth)} truncate`} title={h.text}>
                   {h.text}
                 </a>
               </li>
@@ -47,7 +47,7 @@ const indentStyle = (depth: number) => `margin-left:${Math.max(0, depth - 1) * 8
             <ul class="space-y-1">
               {headings.map((h) => (
                 <li class={`transition-colors ${indentClass(h.depth)}`} style={indentStyle(h.depth)}>
-                  <a href={`#${h.slug}`} class={`hover:underline block leading-snug ${headingTextClass(h.depth)}`}>
+                  <a href={`#${h.slug}`} class={`hover:text-primary block leading-snug ${headingTextClass(h.depth)}`}>
                     {h.text}
                   </a>
                 </li>
