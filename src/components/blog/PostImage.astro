@@ -1,0 +1,47 @@
+---
+export interface Props {
+  src: string;
+  alt?: string;
+  width?: number | string; // Max width constraint
+  align?: 'left' | 'center' | 'right';
+  rounded?: boolean;
+  shadow?: boolean;
+}
+
+const {
+  src,
+  alt = '',
+  width = 640,
+  align = 'center',
+  rounded = true,
+  shadow = true,
+} = Astro.props;
+
+const maxWidth = typeof width === 'number' ? `${width}px` : width;
+
+const alignmentClass = {
+  left: 'mr-auto text-left',
+  center: 'mx-auto text-center',
+  right: 'ml-auto text-right',
+}[align] || 'mx-auto text-center';
+
+const figureStyle = `max-width:${maxWidth}; width:100%;`;
+---
+
+<figure class={`my-8 flex flex-col gap-2 ${alignmentClass}`} style={figureStyle}>
+  <img
+    src={src}
+    alt={alt}
+    loading="lazy"
+    decoding="async"
+    class={`w-full ${rounded ? 'rounded-xl' : ''} ${shadow ? 'shadow-lg' : ''}`}
+    style={`max-width:${maxWidth}; width:100%;`}
+  />
+  {
+    Astro.slots.has('caption') && (
+      <figcaption class="text-sm text-muted dark:text-slate-400">
+        <slot name="caption" />
+      </figcaption>
+    )
+  }
+</figure>
