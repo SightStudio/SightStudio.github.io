@@ -1,8 +1,10 @@
 ---
+import PostImageZoom from '~/components/react/PostImageZoom';
+
 export interface Props {
   src: string;
   alt?: string;
-  width?: number | string; // Max width constraint
+  width?: number | string;
   align?: 'left' | 'center' | 'right';
   rounded?: boolean;
   shadow?: boolean;
@@ -26,22 +28,25 @@ const alignmentClass = {
 }[align] || 'mx-auto text-center';
 
 const figureStyle = `max-width:${maxWidth}; width:100%;`;
+const reactStyle = { maxWidth, width: '100%', marginTop: '0.5rem', marginBottom: '0.3rem', fontWeight: 'bold' }; 
+const baseClass = `w-full transition-transform duration-200 ease-out ${rounded ? 'rounded-xl' : ''} ${
+  shadow ? 'shadow-lg' : ''
+}`;
+
 ---
 
 <figure class={`my-8 flex flex-col gap-2 ${alignmentClass}`} style={figureStyle}>
-  <img
+  <PostImageZoom
+    client:load
     src={src}
     alt={alt}
-    loading="lazy"
-    decoding="async"
-    class={`w-full ${rounded ? 'rounded-xl' : ''} ${shadow ? 'shadow-lg' : ''}`}
-    style={`max-width:${maxWidth}; width:100%;`}
+    className={`${baseClass}`}
+    style={reactStyle}
   />
-  {
-    Astro.slots.has('caption') && (
-      <figcaption class="text-sm text-muted dark:text-slate-400">
-        <slot name="caption" />
-      </figcaption>
-    )
-  }
+  
+  {Astro.slots.has('caption') && (
+    <figcaption class="text-sm text-muted dark:text-slate-400" style="margin-top: 0">
+      <slot name="caption" />
+    </figcaption>
+  )}
 </figure>
