@@ -1,0 +1,20 @@
+---
+export interface Props {
+  summary: string;
+  defaultOpen?: boolean;
+}
+
+const { summary, defaultOpen = false } = Astro.props;
+---
+
+<details
+  class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 my-6 bg-white dark:bg-slate-900"
+  {...(defaultOpen ? { open: true } : {})}
+>
+  <summary class="cursor-pointer font-semibold text-sm md:text-base text-gray-700 dark:text-gray-300">
+    {summary}
+  </summary>
+  <div class="mt-3 space-y-3 text-sm md:text-base">
+    <slot />
+  </div>
+</details>

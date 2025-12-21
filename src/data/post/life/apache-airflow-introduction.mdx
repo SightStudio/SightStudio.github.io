@@ -9,34 +9,24 @@ image: ~/assets/images/thumbnail/apache-airflow-introduction.png
 ---
 
 import PostImage from '~/components/blog/PostImage.astro';
+import Fold from '~/components/common/Fold.astro';
 
 <PostImage src="/images/blog/apache-airflow-introduction/img_11.png" alt="" />
 <PostImage src="/images/blog/apache-airflow-introduction/img_12.png" alt="" />
 
-
-
 지난 2025.02.13 (목)에 아파치 에어플로우 밋업을 다녀왔습니다.  
-
 사실 그전까지 'Airflow라는 게 있다. 써보니 좋더라' 정도만 들었었고 정확히 어떤 기술인지 알지 못했는데요.  
-
 밋업에 대한 후기도 좋지만 Airflow에 대한 지식이 전무했어서, Airflow에 대해서 간략하게 알아보고  
-
 백엔드 조직에서 쓴다면 어떨지에 대한 고민을 해보았습니다.  
 
 ## Airflow 란?
 
-
-
 <PostImage src="/images/blog/apache-airflow-introduction/img.png" alt="" />
-
-
 
 Apache Airflow는 Airbnb에서 시작된 **오픈소스 워크플로우 오케스트레이션 툴**로, 아파치 재단에서 관리하고 있습니다.  
 
 **데이터** **파이프라인과 배치 작업을 정의, 스케줄링 및 실행**하는 데 특화되어 있습니다.  
-
 아래 글을 참고하여 현시점 워크플로우 오케스트레이션 툴 중에서는  
-
 아파치 에어플로우가 제일 활발하고, 인기 있는 것을 확인할 수 있었습니다.  
 
 **https://www.pracdata.io/p/state-of-workflow-orchestration-ecosystem-2025**  
@@ -49,27 +39,14 @@ DAG를 통해 여러 개의 Task 간의 실행 순서와 종속성을 정의할 
 
 그리고 무엇보다 **DAG는 파이썬으로 작성됩니다.**  
 
-
-
 <PostImage src="/images/blog/apache-airflow-introduction/img_1.png" alt="" />
-
-
-
-
-
 <PostImage src="/images/blog/apache-airflow-introduction/img_2.png" alt="" />
-
-
 
 ## Ariflow의 아키텍처
 
 다음은 Airflow 아키텍처입니다. 생각보다 단순해서 어렵지 않습니다.  
 
-
-
 <PostImage src="/images/blog/apache-airflow-introduction/img_3.png" alt="" />
-
-
 
 • **Webserver**  
 
@@ -110,6 +87,8 @@ even\_task에서는 짝수를, odd\_task에서는 홀수를 출력하는 워크�
 - 리트라이: 실패 시 5분 뒤에 1번만 재시도
 
 코드는 접은 글에 있습니다.  
+
+<Fold summary="Airflow 예제 DAG 코드 보기">
 
 ```python
 from airflow import DAG
@@ -192,46 +171,31 @@ final = PythonOperator(
 start >> [even, odd] >> final
 ```
 
+</Fold>
+
 DAG폴더에 해당 파이썬 파일을 추가하면, localhost:8080에서 해당 DAG가 노출되는 것을 확인할 수 있습니다.  
 
 
 
 <PostImage src="/images/blog/apache-airflow-introduction/img_4.png" alt="" />
-
-
-
-
-
 <PostImage src="/images/blog/apache-airflow-introduction/img_5.png" alt="" />
-
-
-
-
-
 <PostImage src="/images/blog/apache-airflow-introduction/img_6.png" alt="" />
 
-
-
 해당 DAG안으로 들어가면, DAG가 DAG Run (DAG가 실행된 단위)들이 기록으로 남아있는 것을 볼 수 있습니다.  
-
-DAG Run 안에 Task들의 상태까지도 관측할 수 있습니다.  
-
+DAG Run 안에 Task들의 상태까지도 관측할 수 있습니다.    
 
 
 <PostImage src="/images/blog/apache-airflow-introduction/img_7.png" alt="" />
 
-
-
 여기에서 KubernetesPodOperator를 사용하면 특정 TASK의 자원을 제한하는 유연성을 제공할 수 있습니다.  
-
 그 외에도 다 향한 Operator들이 존재합니다.  
 
-| Operator 유형 | 설명 |  
-|---------------|------|  
-| **Trigger / Sensor** | 외부 이벤트를 감지하고 데이터 수집 (예: 파일 업로드 감지, API 응답 대기) |  
-| **PythonOperator / BranchPythonOperator** | 데이터 변환, 조건 분기 처리 (Python 코드 실행) |  
-| **DatabaseOperator / BashOperator** | 데이터 저장, API 호출, 파일 저장 등의 작업 수행 |  
-| **DAG Task (PythonOperator)** | 배치 실행, 데이터 파이프라인의 핵심 Task |  
+| Operator 유형                               | 설명                                            |  
+|-------------------------------------------|-----------------------------------------------|  
+| **Trigger / Sensor**                      | 외부 이벤트를 감지하고 데이터 수집 (예: 파일 업로드 감지, API 응답 대기) |  
+| **PythonOperator / BranchPythonOperator** | 데이터 변환, 조건 분기 처리 (Python 코드 실행)               |  
+| **DatabaseOperator / BashOperator**       | 데이터 저장, API 호출, 파일 저장 등의 작업 수행                |  
+| **DAG Task (PythonOperator)**             | 배치 실행, 데이터 파이프라인의 핵심 Task                     |  
 
 ## 이걸 어디에 쓸 것인가?
 
@@ -265,48 +229,30 @@ Airflow를 사용해 보니 데이터 엔지니어링뿐 아니라 백엔드에�
 
 실행기록등을 airflow에서 API로 export 할 수 있어서 이런 부분도 대응하기 쉬워 보입니다.  
 
-
-
 <PostImage src="/images/blog/apache-airflow-introduction/img_8.png" alt="" />
-
-
 
 ### K8s CronJob
 
 k8s환경에서는 배치 스케줄링을 k8s cronjob을 사용하는데요.  
-
 이렇게 k8s의 cronjob을 사용하면 여러 k8s 클러스터 간의 배치기록을 관리할 수 없고  
-
 curl로 배치를 트리거하는 정도의 작업밖에 불가능합니다. 배치의 성공, 실패 또한 파악하기 어렵습니다.  
-
 당연히 워크플로우도 기대할 수 없습니다.  
 
-
-
 <PostImage src="/images/blog/apache-airflow-introduction/img_9.png" alt="" />
-
-
 
 ### Jenkins
 
 역사와 전통의 젠킨스도 이런 배치 스케줄링, 워크플로우 작업을 할 수 있습니다.  
-
 당연히 플러그인을 통해 권한제어도 가능합니다.  
-
 다만 Jekins는 Task 별로 자원 할당이 불가능하고, 워크플로우에 대한 지원, 관측성도 부족합니다.  
-
 이런 CI/CD가 제외된 목적에서는 Jenkins를 사용할 이유가 많이 줄어듭니다.  
-
-
 
 <PostImage src="/images/blog/apache-airflow-introduction/img_10.png" alt="" />
 
-
-
 다음은 위의 예시를 Jenkins Pipeline으로 변환한 groovy 코드입니다. (접은 글 참고)  
-
 개인의 차이는 있겠지만 groovy보단 python이 훨씬 작업하기 편해 보입니다 ㅎㅎ  
 
+<Fold summary="Jenkins Pipeline으로 변환한 groovy 코드">
 ```groovy
 pipeline {
     agent any
@@ -373,30 +319,20 @@ pipeline {
     }
 }
 ```
+</Fold>
 
 ### Spring Cloud Data Flow
 
-
-
 <PostImage src="/images/blog/apache-airflow-introduction/img_13.png" alt="" />
-
-
-
-
 <PostImage src="/images/blog/apache-airflow-introduction/img_14.png" alt="" />
 
-
-
 SCDF 또한 Airflow와 유사하게 워크플로우를 만들 수 있습니다.  
-
 추가로 SCDF는 Spring 기반 애플리케이션에서 잘 어울리며, **실시간** **스트리밍 및 배치 모두 지원**하는 장점이 있습니다.  
-
 몇 개 비교해 보자면  
 
 #### 재실행성
 
 Airflow는 DAG에서 Task단위로 세밀하게 Retry 설정을 할 수 있지만  
-
 SCDF는 전체 배치 단위로 실패 감지 후 재실행할 수 있습니다.  
 
 #### 관측성
@@ -406,25 +342,16 @@ SCDF는 전체 배치 단위로 실패 감지 후 재실행할 수 있습니다.
 #### 자바, Spring 연계
 
 SCDF는 jar파일로 앱을 등록하고 이를 통해 Task들을 실행합니다.  
-
 즉 컴파일을 하고, Spring Batch를 사용할 수 있습니다. 자바 기반으로 코드를 작성할 수 있다는 게  
-
 스프링 진영에서는 꽤 괜찮은 선택지로 보이네요.  
-
 그리고 스트리밍이 지원된다는 점 또한 SCDF를 고려할만한 선택지로 만들어줍니다.  
-
 단순히 API로 배치 트리거링을 하는 것 이외 스프링 환경에서 스트리밍이나, 다른 작업이 많다면  
-
 SCDF도 좋아 보이네요 ㅎㅎ  
 
 ## 결론
 
 Airflow를 써보니 자바를 주력으로 쓰는 개발자임에도  
-
 간단한 파이썬 코드 작성으로 이 정도의 편리함을 느낄 수 있던 건  
-
-Airflow가 그만큼 잘 만든 좋은 기술이라는 증거로 생각됩니다.  
-
+Airflow가 그만큼 잘 만든 좋은 기술이라는 증거로 생각됩니다.
 배치와 워크플로우 오케스트레이션 툴은 팀의 상황에 따라 SCDF와 Airflow 중 하나를 선택해서 고를듯합니다.  
-
 이렇게 다른 기술과 비교해 보는 것을 마지막으로 글을 마치도록 하겠습니다.  

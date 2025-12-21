@@ -9,6 +9,7 @@ image: ~/assets/images/thumbnail/mikado-method-legacy-refactoring.jpeg
 ---
 
 import PostImage from '~/components/blog/PostImage.astro';
+import Fold from '~/components/common/Fold.astro';
 
 <PostImage src="/images/blog/mikado-method-legacy-refactoring/img_1.png" width={480} align="center">
   <span slot="caption">Mikado Method</span>
@@ -79,6 +80,72 @@ import PostImage from '~/components/blog/PostImage.astro';
 
 mermaid를 사용해서 미카도 메서드를 그려봅시다.  
 코드는 접은 글에 있습니다.  
+
+<Fold summary="Mermaid 코드">
+
+```mermaid
+flowchart BT
+
+최종목표((("신규 기안지 추가 시간 단축")))
+
+단기목표((("
+[단기목표]
+신규 기안지 D 추가
+")))
+
+프론트교체(("JSP기반의 페이지를 리엑트 기반의 CSR로 변경"))
+
+%% 프론트 개발
+기안지_V2_프론트_개발(("
+리엑트 기반의 기안지 V2 개발
+"))
+
+%% 프론트 개발 하위목표
+도입_상태관리((상태관리 라이브러리 도입))
+합의_컴포넌트_단위((팀간 컴포넌트 단위 합의))
+합의_디렉토리_구조((디렉토리 구조 합의))
+
+%% 백엔드 개발
+기안지_V2_백엔드_개발(("DDD 기반의 백엔드 API V2 개발"))
+
+%% 백엔드 개발 하위목표
+도입_도메인_모델링((Aggregate Root 도출 및 도메인 모델링))
+도입_ORM((JPA 및 QueryDSL 도입))
+합의_팀원간_코드스타일((팀원간 코딩컨벤션 합의))
+
+기존_기안지_병합(("기존 A,B,C 기안지를 기안지 V2로 재개발"))
+
+기존_프론트_코드_제거(("기존 A, B, C 기안지 프론트 코드 제거"))
+기존_백엔드_코드_제거(("기존 A, B, C 기안지 백엔드 코드 제거"))
+
+기존_기안지_병합 --> 기안지_V2_백엔드_개발
+기안지_V2_백엔드_개발 --> 도입_도메인_모델링
+기안지_V2_백엔드_개발 --> 도입_ORM
+기안지_V2_백엔드_개발 --> 합의_팀원간_코드스타일
+
+기존_기안지_병합 --> 기안지_V2_프론트_개발
+기안지_V2_프론트_개발 --> 도입_상태관리
+기안지_V2_프론트_개발 --> 합의_컴포넌트_단위
+기안지_V2_프론트_개발 --> 합의_디렉토리_구조
+
+%% 단기목표
+단기목표 --> 기안지_V2_프론트_개발
+단기목표 --> 기안지_V2_백엔드_개발
+
+%% 최종목표
+프론트교체 -- 내년 1분기에 가능 --> 기존_기안지_병합
+최종목표 --> 프론트교체
+최종목표 --> 기존_프론트_코드_제거
+최종목표 --> 기존_백엔드_코드_제거
+
+%%%%
+style 도입_상태관리 fill:#50C878
+style 합의_컴포넌트_단위 fill:#50C878
+style 합의_디렉토리_구조 fill:#50C878
+style 기안지_V2_프론트_개발 fill:#ffde21
+```  
+
+</Fold>
 
 <PostImage src="/images/blog/mikado-method-legacy-refactoring/img_3.png" width={650} align="center">
   <span slot="caption">Mikado Graph</span>
