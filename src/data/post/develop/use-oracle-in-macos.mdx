@@ -8,25 +8,33 @@ draft: false
 image: ~/assets/images/thumbnail/use-oracle-in-macos.jpeg
 ---
 
-**사용 툴** : Intellij IDEA
-**선행 조건** : **[\[Docker For Mac\]](https://www.docker.com/products/docker-desktop)** 설치
+import PostImage from '~/components/blog/PostImage.astro';
 
-오라클 12c에 추가된 CDB와 PDB의 개념은 따로 설명하지 않는다.
+**사용 툴** : Intellij IDEA  
+**선행 조건** : **[\[Docker For Mac\]](https://www.docker.com/products/docker-desktop)** 설치  
 
-Docker에 자체에 대한 설명도 여기서 다루지는 않는다.
+오라클 12c에 추가된 CDB와 PDB의 개념은 따로 설명하지 않는다.  
+
+Docker에 자체에 대한 설명도 여기서 다루지는 않는다.  
 
 * * *
 
 **우선 Oracle은 공식적으로 MacOS를 지원하지 않는다.**  
-RBD 사용시 주로 **Oracle**을 사용하는데, 이로인해 **MacOS** 유저의 불편이 이만저만이 아니다.
+RBD 사용시 주로 **Oracle**을 사용하는데, 이로인해 **MacOS** 유저의 불편이 이만저만이 아니다.  
 
-  
-원래라면 VM을 깔아야하지만, **Docker**를 통해 좀 더 쉽게 문제를 해결해보자.
+
+
+원래라면 VM을 깔아야하지만, **Docker**를 통해 좀 더 쉽게 문제를 해결해보자.  
 
 대부분의 블로그가 **[\[wnameless/oracle-xe-11g-r2\]](https://hub.docker.com/r/wnameless/oracle-xe-11g-r2)** 이미지를 사용하여 이 방법을 설명하는데  
-이미 도커 허브에는 **[\[Oracle 12c 공식 이미지\]](https://hub.docker.com/_/oracle-database-enterprise-edition)** 가 있기 때문에 공식 이미지를 사용하였다.
 
-![](/images/blog/use-oracle-in-macos/img.png)
+이미 도커 허브에는 **[\[Oracle 12c 공식 이미지\]](https://hub.docker.com/_/oracle-database-enterprise-edition)** 가 있기 때문에 공식 이미지를 사용하였다.  
+
+
+
+<PostImage src="/images/blog/use-oracle-in-macos/img.png" alt="" />
+
+
 
 * * *
 
@@ -37,12 +45,19 @@ RBD 사용시 주로 **Oracle**을 사용하는데, 이로인해 **MacOS** 유�
     docker pull store/oracle/database-enterprise:12.2.0.1-slim
 
 공식이미지에는 두가지가 있는데 둘중 하나를 받으면 된다.  
+
 slim 버전은 기본 이미지에서 일부 기능을 제거하고 가볍게 만든 버전이다.  
-여기서는 **slim** 버전을 사용하였다.
 
-![](/images/blog/use-oracle-in-macos/img_1.png)
+여기서는 **slim** 버전을 사용하였다.  
 
-다음 명령어를 통해 컨테이너를 생성한다.    
+
+
+<PostImage src="/images/blog/use-oracle-in-macos/img_1.png" alt="" />
+
+
+
+다음 명령어를 통해 컨테이너를 생성한다.  
+
 DB저장 폴더 경로는 각자의 로컬 PC 경로이다.  
 
 ```shell
@@ -59,38 +74,62 @@ docker run                          \
 ```
 
 정상적으로 실행이되면 3307포트에 오라클 컨테이너가 띄워질 것이다.  
-컨테이너를 재시작해도 데이터가 남아있을 수 있도록 볼륨(-v) 옵션을 줫다.
 
-다음은 실행 터미널 화면이다.
+컨테이너를 재시작해도 데이터가 남아있을 수 있도록 볼륨(-v) 옵션을 줫다.  
 
-![](/images/blog/use-oracle-in-macos/img_2.png)
+다음은 실행 터미널 화면이다.  
 
-도커 컨테이너는 **인텔리제이** 또는 데스크탑 상단 **도커 아이콘 > Dashboard**에서 컨테이너를 켜고 끌 수 있다.
 
-![](/images/blog/use-oracle-in-macos/img_3.png)
+
+<PostImage src="/images/blog/use-oracle-in-macos/img_2.png" alt="" />
+
+
+
+도커 컨테이너는 **인텔리제이** 또는 데스크탑 상단 **도커 아이콘 > Dashboard**에서 컨테이너를 켜고 끌 수 있다.  
+
+
+
+<PostImage src="/images/blog/use-oracle-in-macos/img_3.png" alt="" />
+
+
 
 ## 2\. 컨테이너 접속 후 유저 생성
 
-1번 돋보기를 눌러, 2번에 database를 입력하고, 3번에 좌측 텝을 클릭하고 추가 버튼을 누른다.
+1번 돋보기를 눌러, 2번에 database를 입력하고, 3번에 좌측 텝을 클릭하고 추가 버튼을 누른다.  
 
-![](/images/blog/use-oracle-in-macos/img_4.png)
 
-그리고 좌측 추가 버튼을 눌러 오라클을 추가 하고 아래 사진과 같이 입력한다.
 
-![](/images/blog/use-oracle-in-macos/img_5.png)
+<PostImage src="/images/blog/use-oracle-in-macos/img_4.png" alt="" />
+
+
+
+그리고 좌측 추가 버튼을 눌러 오라클을 추가 하고 아래 사진과 같이 입력한다.  
+
+
+
+<PostImage src="/images/blog/use-oracle-in-macos/img_5.png" alt="" />
+
+
 
 오라클은 이미지의 기본 계정은 다음과 같다. 이 계정으로 먼저 접속한다.  
+
 **Username** : system  
-**Password** : Oradoc\_db1
 
-그러면 다음과 같이 접속이 완료된 것을 볼 수 있다.
+**Password** : Oradoc\_db1  
 
-![](/images/blog/use-oracle-in-macos/img_6.png)
+그러면 다음과 같이 접속이 완료된 것을 볼 수 있다.  
 
-이제 따로 각자 계정을 생성하거나, 적절히 커스터마이징 하여 사용하면 된다.
+
+
+<PostImage src="/images/blog/use-oracle-in-macos/img_6.png" alt="" />
+
+
+
+이제 따로 각자 계정을 생성하거나, 적절히 커스터마이징 하여 사용하면 된다.  
 
 필자는 CLI로 바로 실행하기 보다는 **docker-compose**로 DB들을 따로 기술해놓고 실행한다.  
-이렇게 기술해놓으면 컨테이너 관리를 더 편하게 할 수 있다.
+
+이렇게 기술해놓으면 컨테이너 관리를 더 편하게 할 수 있다.  
 
 ```yaml
 # docker-compose.yml

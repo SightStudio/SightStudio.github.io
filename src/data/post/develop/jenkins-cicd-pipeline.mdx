@@ -8,36 +8,42 @@ draft: false
 image: ~/assets/images/thumbnail/jenkins-cicd-pipeline.png
 ---
 
-취준하는 동안 지루하기도 해서 T아카데미에서 열린 **Jenkins를 활용한 CI/CD 파이프 라인** 강좌를 듣고 왔습니다.
+import PostImage from '~/components/blog/PostImage.astro';
 
-강의는 **2020.10.22 목 13:00 ~ 17:00**까지 진행되었으며 젠킨스 실습을 주로 이루었습니다.
+취준하는 동안 지루하기도 해서 T아카데미에서 열린 **Jenkins를 활용한 CI/CD 파이프 라인** 강좌를 듣고 왔습니다.  
 
-![](/images/blog/jenkins-cicd-pipeline/img_1.png)
-![](/images/blog/jenkins-cicd-pipeline/img_2.png)
+강의는 **2020.10.22 목 13:00 ~ 17:00**까지 진행되었으며 젠킨스 실습을 주로 이루었습니다.  
 
-사실 여태까지 진행한 개인 프로젝트에서는 젠킨스를 대부분 shell로 작성했었는데,
 
-이번에는 **파이프라인**을 사용하는 법을 배웠고, agent로 마스터 슬레이브 형태로 잡을 배치하는 법을 배웠습니다.
 
-인턴이나 연구원 시절에는 남이 구축해놓은 파이프라인, 마스터 슬레이브를 사용했었는데
+<PostImage src="/images/blog/jenkins-cicd-pipeline/img_1.png" alt="" />
+<PostImage src="/images/blog/jenkins-cicd-pipeline/img_2.png" alt="" />
 
-어느정도? 실제로 구축해보니 재밋었네요.
 
-그리고 대부분 github의 웹훅 등을 이용해 구축하는데, 이번에는 SCM형태의 폴링으로 진행해보니 신선했습니다.
 
-실습은 AWS기반 클라우드 위에서 진행되었습니다. 사실 강사님이 AWS ECS까지 실습을 해본다고 하셨는데,
+사실 여태까지 진행한 개인 프로젝트에서는 젠킨스를 대부분 shell로 작성했었는데,  
 
-사실 ECS가 프리티어로 존재하지도 않고, 짧은 시간안에 ECS 까지 하려는게 부담되어 그런지
+이번에는 **파이프라인**을 사용하는 법을 배웠고, agent로 마스터 슬레이브 형태로 잡을 배치하는 법을 배웠습니다.  
 
-**EC2 + S3** 까지만 진행하였습니다. (살짝 아쉽..)
+인턴이나 연구원 시절에는 남이 구축해놓은 파이프라인, 마스터 슬레이브를 사용했었는데  
 
-그래도 이정도 배웟으면 응용해서 ECS 파이프라인 배포는 따로 공부해도 문제 없을듯하네요.
+어느정도? 실제로 구축해보니 재밋었네요.  
 
-복습하는 느낌으로 들었습니다. 굳굳
+그리고 대부분 github의 웹훅 등을 이용해 구축하는데, 이번에는 SCM형태의 폴링으로 진행해보니 신선했습니다.  
 
-현재는 개인, 팀프로젝트에서 젠킨스 서버를 별도로 띄우는게 부담되서
+실습은 AWS기반 클라우드 위에서 진행되었습니다. 사실 강사님이 AWS ECS까지 실습을 해본다고 하셨는데,  
 
-**Github Action**으로 갈아탓는데 취업하면 언젠간 도움이 되지 않을까 합니다 ㅎㅎ...
+사실 ECS가 프리티어로 존재하지도 않고, 짧은 시간안에 ECS 까지 하려는게 부담되어 그런지  
+
+**EC2 + S3** 까지만 진행하였습니다. (살짝 아쉽..)  
+
+그래도 이정도 배웟으면 응용해서 ECS 파이프라인 배포는 따로 공부해도 문제 없을듯하네요.  
+
+복습하는 느낌으로 들었습니다. 굳굳  
+
+현재는 개인, 팀프로젝트에서 젠킨스 서버를 별도로 띄우는게 부담되서  
+
+**Github Action**으로 갈아탓는데 취업하면 언젠간 도움이 되지 않을까 합니다 ㅎㅎ...  
 
 ## 강의 목표
 
@@ -53,4 +59,8 @@ image: ~/assets/images/thumbnail/jenkins-cicd-pipeline.png
 
 6. 실제 운영 환경에서 Jenkins 사용 사례 알아보기
 
-![](/images/blog/jenkins-cicd-pipeline/img.png)
+
+
+<PostImage src="/images/blog/jenkins-cicd-pipeline/img.png" alt="" />
+
+

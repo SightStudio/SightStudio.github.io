@@ -8,51 +8,67 @@ draft: false
 image: ~/assets/images/thumbnail/jooq-with-jpa.png
 ---
 
-![jOOQ와 JPA](/images/blog/jooq-with-jpa/img.png)
+import PostImage from '~/components/blog/PostImage.astro';
 
-[jOOQ에 대해 좀 더 알아보자](https://sightstudio.tistory.com/66) 라는 글을 쓴 지 벌써 8개월 가까이 지났습니다.
+<PostImage src="/images/blog/jooq-with-jpa/img.png" alt="jOOQ와 JPA">
+  <span slot="caption">jOOQ와 JPA</span>
+</PostImage>
 
-현재 재직 중인 회사에서는 아직 jOOQ를 사용하지 않고 있는데요.
+[jOOQ에 대해 좀 더 알아보자](https://sightstudio.tistory.com/66) 라는 글을 쓴 지 벌써 8개월 가까이 지났습니다.  
 
-그래도 언젠가는 쓰일 수 있다는 생각에 기술검증을 하기 위해 이것저것 시도했었습니다.
+현재 재직 중인 회사에서는 아직 jOOQ를 사용하지 않고 있는데요.  
 
-삽질을 많이 하다 보니 혼자 알고 있기에는 아까운 점들이 있어 정리합니다.
+그래도 언젠가는 쓰일 수 있다는 생각에 기술검증을 하기 위해 이것저것 시도했었습니다.  
 
-여러 고난이 있었고 jOOQ의 창시자의 도움을 받아 진행한 점도 있었습니다.
+삽질을 많이 하다 보니 혼자 알고 있기에는 아까운 점들이 있어 정리합니다.  
 
-프로젝트에 jOOQ 또는 jOOQ + JPA 조합을 도입하길 원하시는 분들은
+여러 고난이 있었고 jOOQ의 창시자의 도움을 받아 진행한 점도 있었습니다.  
 
-이 글을 읽고 고민하시는 것도 좋을 듯합니다.
+프로젝트에 jOOQ 또는 jOOQ + JPA 조합을 도입하길 원하시는 분들은  
 
-**- 본 포스트는 아래를 목표로 지정하고 작성하였습니다.**
+이 글을 읽고 고민하시는 것도 좋을 듯합니다.  
+
+**- 본 포스트는 아래를 목표로 지정하고 작성하였습니다.**  
 
 1. Gradle 환경에서 JPA 엔티티를 사용하여 jOOQ DSL 만들기
 
 2. 하나의 프로젝트에서 jOOQ와 JPA를 같이 사용하기
 
-**- 본 포스트는 독자가 다음에 대한 지식을 가지고 있다는 전제하에 작성하였습니다.**
+**- 본 포스트는 독자가 다음에 대한 지식을 가지고 있다는 전제하에 작성하였습니다.**  
 
 1. JPA + QueryDSL에 대한 사용 경험
 
 2. jOOQ에 대한 기본적인 이해
 
-gradle기반의 예제 프로젝트가 없어서 필자가 직접 작성하였습니다. **[[코드]](https://github.com/SightStudio/blog-code/tree/develop/jooq-with-jpa)**
+gradle기반의 예제 프로젝트가 없어서 필자가 직접 작성하였습니다. **[[코드]](https://github.com/SightStudio/blog-code/tree/develop/jooq-with-jpa)**  
 
-maven 환경에서는 **[[공식 레포]](https://github.com/jOOQ/jOOQ/tree/main/jOOQ-examples/jOOQ-jpa-example-entities)**에 예제 코드가 잘 되어있어 공식 레포를 확인하고 따라가시면 됩니다.
+maven 환경에서는 **[[공식 레포]](https://github.com/jOOQ/jOOQ/tree/main/jOOQ-examples/jOOQ-jpa-example-entities)**에 예제 코드가 잘 되어있어 공식 레포를 확인하고 따라가시면 됩니다.  
 
 ## 0. 도입
 
-jOOQ는 DSL을 통해 SQL을 작성하기 때문에 "**사용자 입장"에서는** 별다른 사전 지식 없이 사용할 수 있습니다.
+jOOQ는 DSL을 통해 SQL을 작성하기 때문에 "**사용자 입장"에서는** 별다른 사전 지식 없이 사용할 수 있습니다.  
 
-아래와 같이 일반적인 쿼리를 짜듯 코드를 작성하면 동작합니다.
+아래와 같이 일반적인 쿼리를 짜듯 코드를 작성하면 동작합니다.  
 
 - 작성한 DSL
 
-![jOOQ DSL 작성](/images/blog/jooq-with-jpa/img_1.png)
+
+
+<PostImage src="/images/blog/jooq-with-jpa/img_1.png" alt="jOOQ DSL 작성">
+  <span slot="caption">jOOQ DSL 작성</span>
+</PostImage>
+
+
 
 - 결과
 
-![쿼리 결과](/images/blog/jooq-with-jpa/img_2.png)
+
+
+<PostImage src="/images/blog/jooq-with-jpa/img_2.png" alt="쿼리 결과">
+  <span slot="caption">쿼리 결과</span>
+</PostImage>
+
+
 
 ```sql
 -- GET {{server}}/board?keyword=cbi7qn55ua&size=20&page=1
@@ -72,181 +88,247 @@ limit 20 offset 0
 
 ## 1. Schema - Scan 방식의 문제점
 
-대부분의 jOOQ 프로젝트는 직접 DB 테이블 DDL을 스캔하여 DSL을 생성하는 방식을 따르고 있습니다.
+대부분의 jOOQ 프로젝트는 직접 DB 테이블 DDL을 스캔하여 DSL을 생성하는 방식을 따르고 있습니다.  
 
-이 경우에는 몇 가지 잠재적인 문제점을 가지고 있는데요.
+이 경우에는 몇 가지 잠재적인 문제점을 가지고 있는데요.  
 
-여러 명이 하나의 개발 DB를 바라보며 개발하는 환경에서 누군가 테이블의 스키마를 수정했을 경우,
+여러 명이 하나의 개발 DB를 바라보며 개발하는 환경에서 누군가 테이블의 스키마를 수정했을 경우,  
 
-현재 개발 중인 모든 인원에게 영향을 미칩니다. 다른 인원들이 빌드를 할 때 DSL이 변경되니 컴파일 에러가 납니다.
+현재 개발 중인 모든 인원에게 영향을 미칩니다. 다른 인원들이 빌드를 할 때 DSL이 변경되니 컴파일 에러가 납니다.  
 
-수정한 인원이 DSL을 수정하여 개발 브랜치에 반영해주기 전까지 다른 인원들은 프로젝트를 실행할 수가 없습니다.
+수정한 인원이 DSL을 수정하여 개발 브랜치에 반영해주기 전까지 다른 인원들은 프로젝트를 실행할 수가 없습니다.  
 
-그렇다고 로컬 DB에서 스키마를 가져다 띄우자니 DB 버전관리가 부담이 됩니다.
+그렇다고 로컬 DB에서 스키마를 가져다 띄우자니 DB 버전관리가 부담이 됩니다.  
 
-( 이 문제점은 jOOQ와 동일한 컨셉의 QueryDSL-SQL에서도 발생합니다. )
+( 이 문제점은 jOOQ와 동일한 컨셉의 QueryDSL-SQL에서도 발생합니다. )  
 
 ## 2. JPA 엔티티로 DSL을 생성하자!
 
-QueryDSL-JPA를 사용해보신 분들은 JPA엔티티로 쉽게 QClass를 생성하는 걸 겪어보았을 겁니다.
+QueryDSL-JPA를 사용해보신 분들은 JPA엔티티로 쉽게 QClass를 생성하는 걸 겪어보았을 겁니다.  
 
-jOOQ에서도 동일하게 JPA 엔티티를 통해 DSL을 생성한다면 위의 문제를 쉽게 해결할 수 있어 보여
+jOOQ에서도 동일하게 JPA 엔티티를 통해 DSL을 생성한다면 위의 문제를 쉽게 해결할 수 있어 보여  
 
-테스트해보았습니다.
+테스트해보았습니다.  
 
-**그리고 스스로 지옥문을 연 것을 뒤늦게 깨달았습니다.**
+**그리고 스스로 지옥문을 연 것을 뒤늦게 깨달았습니다.**  
 
-[https://www.jooq.org/doc/latest/manual/code-generation/codegen-jpa/](https://www.jooq.org/doc/latest/manual/code-generation/codegen-jpa/)
+[https://www.jooq.org/doc/latest/manual/code-generation/codegen-jpa/](https://www.jooq.org/doc/latest/manual/code-generation/codegen-jpa/)  
 
 ## 3. JPADatabase CodeGen
 
-jOOQ는 JPA 엔티티를 사용하여 DSL을 생성할 수 있습니다.
+jOOQ는 JPA 엔티티를 사용하여 DSL을 생성할 수 있습니다.  
 
-정확히는 H2 데이터베이스를 사용하여 JPA엔티티로 H2에 스키마를 생성한 다음,
+정확히는 H2 데이터베이스를 사용하여 JPA엔티티로 H2에 스키마를 생성한 다음,  
 
-이를 리버스 엔지니어링 하여 DSL을 생성하는 방식입니다.
+이를 리버스 엔지니어링 하여 DSL을 생성하는 방식입니다.  
 
-다음과 같이 jOOQ 설정에 JPADatabase를 사용하겠다고 명시하면
+다음과 같이 jOOQ 설정에 JPADatabase를 사용하겠다고 명시하면  
 
-jOOQ는 H2를 통해 위에서 설명한 방식대로 DSL을 생성합니다.
+jOOQ는 H2를 통해 위에서 설명한 방식대로 DSL을 생성합니다.  
 
-![JPADatabase 설정](/images/blog/jooq-with-jpa/img_3.png)
 
-![jOOQ 설정](/images/blog/jooq-with-jpa/img_12.png)
 
-![코드 생성](/images/blog/jooq-with-jpa/img_13.png)
+<PostImage src="/images/blog/jooq-with-jpa/img_3.png" alt="JPADatabase 설정">
+  <span slot="caption">JPADatabase 설정</span>
+</PostImage>
 
-다만... 이 경우에는 아래의 주의사항들이 지켜져야 합니다.
+
+
+
+
+<PostImage src="/images/blog/jooq-with-jpa/img_12.png" alt="jOOQ 설정">
+  <span slot="caption">jOOQ 설정</span>
+</PostImage>
+
+
+
+
+
+<PostImage src="/images/blog/jooq-with-jpa/img_13.png" alt="코드 생성">
+  <span slot="caption">코드 생성</span>
+</PostImage>
+
+
+
+다만... 이 경우에는 아래의 주의사항들이 지켜져야 합니다.  
 
 ## [주의사항 1] - 멀티모듈 강제
 
-JPADatabase를 사용 방식에는 아래와 같은 설계가 요구**(강제)** 됩니다.
+JPADatabase를 사용 방식에는 아래와 같은 설계가 요구**(강제)** 됩니다.  
 
-![멀티모듈 구조](/images/blog/jooq-with-jpa/img_4.png)
 
-이게 무슨 말인지 이해가 안 가는 분들이 많을 겁니다.
 
-**간단히 설명하자면, 단일 모듈로 된 프로젝트에서는 JPA 엔티티를 통해 jOOQ DSL을 생성할 수 없다는 뜻입니다.**
+<PostImage src="/images/blog/jooq-with-jpa/img_4.png" alt="멀티모듈 구조">
+  <span slot="caption">멀티모듈 구조</span>
+</PostImage>
 
-QueryDSL-JPA와는 다르게 JPA 엔티티를 통해 jOOQ DSL을 생성하고 싶다면 멀티 모듈 형태로 구성하여
 
-엔티티를 별도의 모듈로 분리하여야 합니다.
 
-제 코드에서는
+이게 무슨 말인지 이해가 안 가는 분들이 많을 겁니다.  
 
-**application**
-어플리케이션 코드
+**간단히 설명하자면, 단일 모듈로 된 프로젝트에서는 JPA 엔티티를 통해 jOOQ DSL을 생성할 수 없다는 뜻입니다.**  
 
-**jooq-custom**
-DSL codegen 관련 커스텀 설정
+QueryDSL-JPA와는 다르게 JPA 엔티티를 통해 jOOQ DSL을 생성하고 싶다면 멀티 모듈 형태로 구성하여  
 
-**jooq-entity**
-JPA 엔티티
+엔티티를 별도의 모듈로 분리하여야 합니다.  
 
-로 3개 모듈로 분리하여 진행하였습니다.
+제 코드에서는  
 
-![프로젝트 구조](/images/blog/jooq-with-jpa/img_5.png)
+**application**  
+어플리케이션 코드  
 
-신규 프로젝트라면 이 구조로 가도 상관없겠지만, 기존에 존재하는 대형 프로젝트에서는
+**jooq-custom**  
+DSL codegen 관련 커스텀 설정  
 
-이 구조로 가기가 굉장히 부담이 됩니다.
+**jooq-entity**  
+JPA 엔티티  
 
-그걸 떠나서, QueryDSL은 이런거 안 해도 되는데 왜 jOOQ에서는 이걸 강제해야 되는지도 궁금합니다.
+로 3개 모듈로 분리하여 진행하였습니다.  
 
-**궁금한 건 못 참죠. 직접 창시자한테 가서 물어봤습니다.**
 
-**관련 이슈:** [https://github.com/jOOQ/jOOQ/issues/13824](https://github.com/jOOQ/jOOQ/issues/13824)
 
-**답변**
+<PostImage src="/images/blog/jooq-with-jpa/img_5.png" alt="프로젝트 구조">
+  <span slot="caption">프로젝트 구조</span>
+</PostImage>
 
-![창시자 답변](/images/blog/jooq-with-jpa/img_6.png)
 
-QueryDSL은 annotation processing API를 사용하여 멀티모듈이 아니더라도 Q 클래스를 생성할 수 있습니다.
 
-(**querydsl-apt**가 이를 담당하고 있습니다)
+신규 프로젝트라면 이 구조로 가도 상관없겠지만, 기존에 존재하는 대형 프로젝트에서는  
 
-간단하게 요약하자면 annotaion processing은
+이 구조로 가기가 굉장히 부담이 됩니다.  
 
-컴파일 단계에서 애너테이션에 대한 처리를 할 수 있게 해 줍니다.
+그걸 떠나서, QueryDSL은 이런거 안 해도 되는데 왜 jOOQ에서는 이걸 강제해야 되는지도 궁금합니다.  
 
-QueryDSL은 이 기법을 통해 **컴파일 단계에서 엔티티를 스캔하여 QClass들을 생성**함으로써
+**궁금한 건 못 참죠. 직접 창시자한테 가서 물어봤습니다.**  
 
-하나의 프로젝트에서 존재할 수 있는 것이었습니다.
+**관련 이슈:** [https://github.com/jOOQ/jOOQ/issues/13824](https://github.com/jOOQ/jOOQ/issues/13824)  
 
-그리고 창시자의 입장은 **annotation processing 기법을 사용하지 않는 것이었습니다.**
+**답변**  
 
-창시자는 annotation processing을 통한 접근을 일종을 hacky 한 방식이고,
 
-다른 라이브러리에서 이 방식을 통한 접근이 지저분한 문제들을 발생시키고 있다고 합니다.
 
-(JOOQ도 이 방식을 채택할 수는 있으나, 이로 인해 다른 새로운 문제가 발생할 것이라 함)
+<PostImage src="/images/blog/jooq-with-jpa/img_6.png" alt="창시자 답변">
+  <span slot="caption">창시자 답변</span>
+</PostImage>
 
-결론은 **annotation processing** 없이 모듈화 되어 컴파일된 모듈을 포함하는 게 제일 깔끔하고,
 
-다른 방식은 다 야매라는 답변을 받았습니다. (맞는 말이긴한데...)
 
-"이부분은 maven도 동일합니다"
+QueryDSL은 annotation processing API를 사용하여 멀티모듈이 아니더라도 Q 클래스를 생성할 수 있습니다.  
+
+(**querydsl-apt**가 이를 담당하고 있습니다)  
+
+간단하게 요약하자면 annotaion processing은  
+
+컴파일 단계에서 애너테이션에 대한 처리를 할 수 있게 해 줍니다.  
+
+QueryDSL은 이 기법을 통해 **컴파일 단계에서 엔티티를 스캔하여 QClass들을 생성**함으로써  
+
+하나의 프로젝트에서 존재할 수 있는 것이었습니다.  
+
+그리고 창시자의 입장은 **annotation processing 기법을 사용하지 않는 것이었습니다.**  
+
+창시자는 annotation processing을 통한 접근을 일종을 hacky 한 방식이고,  
+
+다른 라이브러리에서 이 방식을 통한 접근이 지저분한 문제들을 발생시키고 있다고 합니다.  
+
+(JOOQ도 이 방식을 채택할 수는 있으나, 이로 인해 다른 새로운 문제가 발생할 것이라 함)  
+
+결론은 **annotation processing** 없이 모듈화 되어 컴파일된 모듈을 포함하는 게 제일 깔끔하고,  
+
+다른 방식은 다 야매라는 답변을 받았습니다. (맞는 말이긴한데...)  
+
+"이부분은 maven도 동일합니다"  
 
 ## [주의사항 2] - Jakarta EE 와 Java EE 충돌
 
-**jOOQ 3.16**부터는 Java EE가 아닌 Jakarta EE로 변경됩니다.
+**jOOQ 3.16**부터는 Java EE가 아닌 Jakarta EE로 변경됩니다.  
 
-이 말은 곧 jOOQ 3.16부터는 **javax.persistence**가 아닌 **jakarta.persistence** 기반의
+이 말은 곧 jOOQ 3.16부터는 **javax.persistence**가 아닌 **jakarta.persistence** 기반의  
 
-JPA 애너테이션들을 사용해야 한다는 뜻입니다.
+JPA 애너테이션들을 사용해야 한다는 뜻입니다.  
 
-![Java EE vs Jakarta EE](/images/blog/jooq-with-jpa/img_7.png)
 
-![패키지 변경](/images/blog/jooq-with-jpa/img_8.png)
 
-JPA 엔티티들을 jOOQ DSL 생성용으로만 사용하면 문제없습니다.
+<PostImage src="/images/blog/jooq-with-jpa/img_7.png" alt="Java EE vs Jakarta EE">
+  <span slot="caption">Java EE vs Jakarta EE</span>
+</PostImage>
 
-하지만 보통 이 경우에는 JPA도 같이 쓰죠.
 
-그렇다면 Spring Data JPA에서도 jakarta를 쓰겠죠?
 
-![Spring Boot 버전](/images/blog/jooq-with-jpa/img_9.png)
 
-![javax.persistence](/images/blog/jooq-with-jpa/img_10.png)
 
-어림도 없습니다. Spring Boot 2.x 버전에서는 아직 java EE 기반으로 사용되고 있습니다.
+<PostImage src="/images/blog/jooq-with-jpa/img_8.png" alt="패키지 변경">
+  <span slot="caption">패키지 변경</span>
+</PostImage>
 
-고로 우리는 jOOQ와 JPA를 같이 사용하려면 두 가지 방식 중 하나를 택해야 합니다.
 
-**1. jOOQ 3.16** 미만의 버전 사용
 
-**2. 후에 나올 Spring Boot 3에서 상위 버전 사용**
+JPA 엔티티들을 jOOQ DSL 생성용으로만 사용하면 문제없습니다.  
+
+하지만 보통 이 경우에는 JPA도 같이 쓰죠.  
+
+그렇다면 Spring Data JPA에서도 jakarta를 쓰겠죠?  
+
+
+
+<PostImage src="/images/blog/jooq-with-jpa/img_9.png" alt="Spring Boot 버전">
+  <span slot="caption">Spring Boot 버전</span>
+</PostImage>
+
+
+
+
+
+<PostImage src="/images/blog/jooq-with-jpa/img_10.png" alt="javax.persistence">
+  <span slot="caption">javax.persistence</span>
+</PostImage>
+
+
+
+어림도 없습니다. Spring Boot 2.x 버전에서는 아직 java EE 기반으로 사용되고 있습니다.  
+
+고로 우리는 jOOQ와 JPA를 같이 사용하려면 두 가지 방식 중 하나를 택해야 합니다.  
+
+**1. jOOQ 3.16** 미만의 버전 사용  
+
+**2. 후에 나올 Spring Boot 3에서 상위 버전 사용**  
 
 - Spring Boot 3.0부터는 Jakarta EE가 강제
 
 ## [주의사항 3] - Java 최소 버전
 
-JPA와는 별개로 jOOQ의 자바 최소 버전 문제입니다.
+JPA와는 별개로 jOOQ의 자바 최소 버전 문제입니다.  
 
-jOOQ는 **3.15부터는** Java 11이 최소사양으로 요구되고 **[2021.07 release]**
+jOOQ는 **3.15부터는** Java 11이 최소사양으로 요구되고 **[2021.07 release]**  
 
-jOOQ는 **3.17부터는** Java 17이 최소사양으로 요구됩니다. **[2022.06 release]**
+jOOQ는 **3.17부터는** Java 17이 최소사양으로 요구됩니다. **[2022.06 release]**  
 
-버전업이 굉장히 빠릅니다. 기존 레거시 프로젝트들은 더욱 도입하기 힘들겠네요 ㅎㅎ
+버전업이 굉장히 빠릅니다. 기존 레거시 프로젝트들은 더욱 도입하기 힘들겠네요 ㅎㅎ  
 
-![Java 버전 요구사항](/images/blog/jooq-with-jpa/img_11.png)
+
+
+<PostImage src="/images/blog/jooq-with-jpa/img_11.png" alt="Java 버전 요구사항">
+  <span slot="caption">Java 버전 요구사항</span>
+</PostImage>
+
+
 
 ## 마치며
 
-jOOQ를 세팅하면서 제일 많이 드는 생각은 **이렇게까지 해야 할까?입니다.**
+jOOQ를 세팅하면서 제일 많이 드는 생각은 **이렇게까지 해야 할까?입니다.**  
 
-세팅된 jOOQ를 사용하는 입장에서는 굉장히 쉽고 간편하지만,
+세팅된 jOOQ를 사용하는 입장에서는 굉장히 쉽고 간편하지만,  
 
-프로젝트에 jOOQ를 처음 세팅하는 경우에는 굉장히 힘듭니다.
+프로젝트에 jOOQ를 처음 세팅하는 경우에는 굉장히 힘듭니다.  
 
-공식문서와 온갖 github 레포들을 뒤져보고,
+공식문서와 온갖 github 레포들을 뒤져보고,  
 
-그래도 해결이 안 되면 jOOQ 깃헙으로가서 창시자에게 물어보는 등 많은 고통이 뒤따랐습니다.
+그래도 해결이 안 되면 jOOQ 깃헙으로가서 창시자에게 물어보는 등 많은 고통이 뒤따랐습니다.  
 
-하지만, 막상 설정된 상태로 사용해보면 QueryDSL-SQL보다 훨씬 편하고, 쿼리를 쉽게 작성할 수 있습니다.
+하지만, 막상 설정된 상태로 사용해보면 QueryDSL-SQL보다 훨씬 편하고, 쿼리를 쉽게 작성할 수 있습니다.  
 
-특히 SQL 짜는게 재미있어졌습니다. (기존에는 노동을 하는 느낌이 들고 지루했습니다.)
+특히 SQL 짜는게 재미있어졌습니다. (기존에는 노동을 하는 느낌이 들고 지루했습니다.)  
 
-개인적으로 개발하면서 제일 재미없고, 많은 시간이 많이 걸리는 부분이 SQL을 작성하는 것이라고 생각합니다.
+개인적으로 개발하면서 제일 재미없고, 많은 시간이 많이 걸리는 부분이 SQL을 작성하는 것이라고 생각합니다.  
 
-특히 MyBatis 로 작성할 때가 많이 고통스러운데 jOOQ는 충분히 MyBatis를 대체할 수 있다고 봅니다.
+특히 MyBatis 로 작성할 때가 많이 고통스러운데 jOOQ는 충분히 MyBatis를 대체할 수 있다고 봅니다.  

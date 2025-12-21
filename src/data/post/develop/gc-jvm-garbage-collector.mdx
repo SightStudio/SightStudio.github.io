@@ -8,204 +8,226 @@ draft: false
 image: ~/assets/images/thumbnail/gc-jvm-garbage-collector.png
 ---
 
-자바는 메모리를 자동으로 정리해주는 **managed 언어**이기 때문에
+import PostImage from '~/components/blog/PostImage.astro';
 
-이걸 해주는 Garbage Colletor 가 서버 개발자 면접으로 자주 등장합니다.
+자바는 메모리를 자동으로 정리해주는 **managed 언어**이기 때문에  
 
-개인적으로는 싫어하는 질문이지만
+이걸 해주는 Garbage Colletor 가 서버 개발자 면접으로 자주 등장합니다.  
 
-면접에서 의외로 자주 등장해서, 자바를 사용하는 개발자라면
+개인적으로는 싫어하는 질문이지만  
 
-깊게는 아니더라도 반드시 알아야한다고 생각하기 때문에 정리했습니다.
+면접에서 의외로 자주 등장해서, 자바를 사용하는 개발자라면  
 
-(사실 알아도 까먹는 일이 빈번함)
+깊게는 아니더라도 반드시 알아야한다고 생각하기 때문에 정리했습니다.  
+
+(사실 알아도 까먹는 일이 빈번함)  
 
 ### **[ 1 ] Introduction**
 
-**프로그래머가 저수준의 세부사항을 일일히 신경쓰지 않는 댓가로, 저수준에 대한 제어권을 포기하는것**이
+**프로그래머가 저수준의 세부사항을 일일히 신경쓰지 않는 댓가로, 저수준에 대한 제어권을 포기하는것**이  
 
-자바(JVM)의 사상입니다. 그렇기 때문에 우리는 개발자로써 'JVM 자동으로 해주는데요?' 라는
+자바(JVM)의 사상입니다. 그렇기 때문에 우리는 개발자로써 'JVM 자동으로 해주는데요?' 라는  
 
-추상화 레이어를 벗겨내고 JVM이 어떻게 동작해야하는 알아야할 필요가 있습니다.
+추상화 레이어를 벗겨내고 JVM이 어떻게 동작해야하는 알아야할 필요가 있습니다.  
 
 #### **Garbage 란**
 
-먼저 가비지 컬렉터에서 **회수되는 대상**이 무엇인지부터
+먼저 가비지 컬렉터에서 **회수되는 대상**이 무엇인지부터  
 
-정확하게 정해야 할 필요가 있습니다.
+정확하게 정해야 할 필요가 있습니다.  
 
-[[오라클 공식 문서]](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/generations.html)에서는 **Garbage**를 실행중인 프로그램에서 어느 포인터도 접근할 수 없는 객체라고 정의합니다.
+[[오라클 공식 문서]](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/generations.html)에서는 **Garbage**를 실행중인 프로그램에서 어느 포인터도 접근할 수 없는 객체라고 정의합니다.  
 
-즉 어느곳에도 레퍼런스가 없는 객체를 뜻합니다.
+즉 어느곳에도 레퍼런스가 없는 객체를 뜻합니다.  
 
 #### **어디에 있는 Garbage를 수집하는가**
 
-![](/images/blog/gc-jvm-garbage-collector/screenshot-01.png)
 
-위의 JVM 메모리 구조 중 GC가 유일하게 관여하는 공간은 **[Heap Area]**입니다.
 
-보통 new 연산자 등을 통해 새로운 인스턴스를 만들면 **[Heap Area]**에 올라갑니다.
+<PostImage src="/images/blog/gc-jvm-garbage-collector/screenshot-01.png" alt="" />
+
+
+
+위의 JVM 메모리 구조 중 GC가 유일하게 관여하는 공간은 **[Heap Area]**입니다.  
+
+보통 new 연산자 등을 통해 새로운 인스턴스를 만들면 **[Heap Area]**에 올라갑니다.  
 
 ### **[ 2 ] JVM Heap 구조**
 
 #### **GC 전제조건 - 약한 세대 가설**
 
-JVM의 GC는 **약한 세대 가설**을 기반으로 설계되었으며
+JVM의 GC는 **약한 세대 가설**을 기반으로 설계되었으며  
 
-다음 두가지 가설을 전제로 하고 있습니다.
+다음 두가지 가설을 전제로 하고 있습니다.  
 
     **1. 대부분의 객체는 금방 접근 불가능 상태가 된다.**
 
     **2. 오래된 객체에서 젊은 객체로의 참조는 아주 적게 존재한다.**
 
-이 가설을 기반으로 JVM의 **[Heap Area]** 는 세대별로 나뉘는 **Generational** 한 구조로 설계되었습니다.
+이 가설을 기반으로 JVM의 **[Heap Area]** 는 세대별로 나뉘는 **Generational** 한 구조로 설계되었습니다.  
 
-이 구조를 통해 GC는 모든 객체를 검사해가며 메모리를 해제할 필요가 없습니다.
+이 구조를 통해 GC는 모든 객체를 검사해가며 메모리를 해제할 필요가 없습니다.  
 
-( 다음 세대로 넘어가는 것을 promote라고 표현합니다.)
+( 다음 세대로 넘어가는 것을 promote라고 표현합니다.)  
 
 #### **Generational 한 구조**
 
-![](/images/blog/gc-jvm-garbage-collector/screenshot-02.png)
 
-다음은 **VisualVM**을 통해서 확인한 힙영역 구조입니다.
 
-힙 영역은 크게 **[ Young, Old, Metaspace ]**영역으로 나뉩니다.
+<PostImage src="/images/blog/gc-jvm-garbage-collector/screenshot-02.png" alt="" />
 
-**Yound 영역 ( Eden + Survivor \* 2 )**
 
-객체를 처음 생성하게 되면 Eden 영역에 생성됩니다.
 
-이후 GC가 발생하게 되면 살아남은 객체들은
+다음은 **VisualVM**을 통해서 확인한 힙영역 구조입니다.  
 
-**Servivor 영역**으로 이동합니다.
+힙 영역은 크게 **[ Young, Old, Metaspace ]**영역으로 나뉩니다.  
 
-**Servivor 영역**은 **S0**, **S1** 2개의 스택으로
+**Yound 영역 ( Eden + Survivor \* 2 )**  
 
-구성되어있습니다.
+객체를 처음 생성하게 되면 Eden 영역에 생성됩니다.  
 
-**Yound 영역**에서 발생하는 GC를 **[ Minor GC ]** 라고 합니다.
+이후 GC가 발생하게 되면 살아남은 객체들은  
 
-**Old 영역**
+**Servivor 영역**으로 이동합니다.  
 
-**servivor 영역**에서 살아남은 객체들은 최종적으로 이곳에 옵니다.
+**Servivor 영역**은 **S0**, **S1** 2개의 스택으로  
 
-이곳에서 발생하는 GC를 **[ Major** **GC ]** 라고 합니다.
+구성되어있습니다.  
 
-그리고 모든 Heap 영역에 발생하는 GC를 **[ Full GC ]** 라고 합니다.
+**Yound 영역**에서 발생하는 GC를 **[ Minor GC ]** 라고 합니다.  
 
-**Metaspace 영역**
+**Old 영역**  
 
-과거 perm 영역이라 불렸으며, 이곳에는 Class, method 메타데이터,
+**servivor 영역**에서 살아남은 객체들은 최종적으로 이곳에 옵니다.  
 
-그리고 static과 상수 데이터들이 저장되어있습니다.
+이곳에서 발생하는 GC를 **[ Major** **GC ]** 라고 합니다.  
 
-**Perm 영역**은 jvm에 의해 크기가 강제되던 공간이였으나,
+그리고 모든 Heap 영역에 발생하는 GC를 **[ Full GC ]** 라고 합니다.  
 
-**Metaspace** 영역은 자바 힙영역 외부에 위치하고 있으며, OS가 자동으로 사이즈를 조절합니다.
+**Metaspace 영역**  
 
-(물론 JVM 프로세스 메모리 밖에 위치하고 있지는 않습니다.)
+과거 perm 영역이라 불렸으며, 이곳에는 Class, method 메타데이터,  
+
+그리고 static과 상수 데이터들이 저장되어있습니다.  
+
+**Perm 영역**은 jvm에 의해 크기가 강제되던 공간이였으나,  
+
+**Metaspace** 영역은 자바 힙영역 외부에 위치하고 있으며, OS가 자동으로 사이즈를 조절합니다.  
+
+(물론 JVM 프로세스 메모리 밖에 위치하고 있지는 않습니다.)  
 
 #### **Q. 왜 Servivor 영역이 2 개인가?**
 
-![](/images/blog/gc-jvm-garbage-collector/img.png)
 
-운영체제를 공부해 보셨던 분들이라면 **메모리 단편화**에 대해 들어보셨을 것입니다.
 
-메모리가 할당되고 헤제되기를 반복하다 보면 왼쪽 사진과 같이 총 메모리 공간은 남지만,
+<PostImage src="/images/blog/gc-jvm-garbage-collector/img.png" alt="" />
 
-파편화되어있어 메모리를 할당할 수 없는 문제가 발생합니다. **(외부 단편화)**
 
-그래서 두개의 **Servivor** 끼리 객체를 할당할 수 없을 때, 번갈아가며 메모리를 할당하며 이를 해결합니다.
 
-반대로 생각해서, S1, S2 영역에 모두 데이터가 존재 할 경우. 우리의 JVM 상태는 정상이 아닙니다.
+운영체제를 공부해 보셨던 분들이라면 **메모리 단편화**에 대해 들어보셨을 것입니다.  
+
+메모리가 할당되고 헤제되기를 반복하다 보면 왼쪽 사진과 같이 총 메모리 공간은 남지만,  
+
+파편화되어있어 메모리를 할당할 수 없는 문제가 발생합니다. **(외부 단편화)**  
+
+그래서 두개의 **Servivor** 끼리 객체를 할당할 수 없을 때, 번갈아가며 메모리를 할당하며 이를 해결합니다.  
+
+반대로 생각해서, S1, S2 영역에 모두 데이터가 존재 할 경우. 우리의 JVM 상태는 정상이 아닙니다.  
 
 #### **GC 핵심개념 - Stop The World**
 
-대부분의 현대 GC들은 위에서 설명한 것과 같이 객체에 수명이 있는 generational 한 구조를 가지고 있습니다.
+대부분의 현대 GC들은 위에서 설명한 것과 같이 객체에 수명이 있는 generational 한 구조를 가지고 있습니다.  
 
-그래서 GC 발생 후 살아남은 객체들을 다음 영역으로 보내야합니다.
+그래서 GC 발생 후 살아남은 객체들을 다음 영역으로 보내야합니다.  
 
-그래서 JVM은 GC를 실행하는 동안 GC를 수행하는 스레드를 제외한 모든 스레드의 작접을 정지시키고,
+그래서 JVM은 GC를 실행하는 동안 GC를 수행하는 스레드를 제외한 모든 스레드의 작접을 정지시키고,  
 
-살아남은 객체를 다음 영역으로 Copy합니다.
+살아남은 객체를 다음 영역으로 Copy합니다.  
 
-( 이 방식의 GC를 [stop-and-copy garbage collection](http://ropas.snu.ac.kr/lib/dock/Zo1990.pdf) 이라고 합니다.)
+( 이 방식의 GC를 [stop-and-copy garbage collection](http://ropas.snu.ac.kr/lib/dock/Zo1990.pdf) 이라고 합니다.)  
 
-이 때 시스템이 멈추는 현상을 **stop-the-world** 라고 부릅니다.
+이 때 시스템이 멈추는 현상을 **stop-the-world** 라고 부릅니다.  
 
-이 현상은 아래 후술할 어떤 알고리즘을 실행해도 발생하며,
+이 현상은 아래 후술할 어떤 알고리즘을 실행해도 발생하며,  
 
-대부분의 GC 튜닝은 이 **stop-the-world**를 줄이는걸 목표로 합니다.
+대부분의 GC 튜닝은 이 **stop-the-world**를 줄이는걸 목표로 합니다.  
 
 ### **[ 3 ] GC 기초**
 
 #### **TLAB ( Thread-Local Allocation Buffer )**
 
-jvm은 eden 영역을 여러 버퍼로 나누어 thread 별로 다른 공간에 객체를 할당합니다.
+jvm은 eden 영역을 여러 버퍼로 나누어 thread 별로 다른 공간에 객체를 할당합니다.  
 
-TALB를 적용함으로써 멀티 스레드로 인한 동시성을 지키기 위해 객체를 할당할 때
+TALB를 적용함으로써 멀티 스레드로 인한 동시성을 지키기 위해 객체를 할당할 때  
 
-eden에 lock을 걸지 않아도 됩니다.
+eden에 lock을 걸지 않아도 됩니다.  
 
-![](/images/blog/gc-jvm-garbage-collector/img_1.png)
+
+
+<PostImage src="/images/blog/gc-jvm-garbage-collector/img_1.png" alt="" />
+
+
 
 #### **Bump Pointer Allocation**
 
-C 언어 배열에서 다음 비어있는 포인터를 바로 가져오는 연산을 Bump Pointer라고 합니다.
+C 언어 배열에서 다음 비어있는 포인터를 바로 가져오는 연산을 Bump Pointer라고 합니다.  
 
-( sizeof(object) 로 나눠서 )
+( sizeof(object) 로 나눠서 )  
 
-Bump Pointer의 단점은 당연히 인덱스 개별적으로 free할 수 없고,
+Bump Pointer의 단점은 당연히 인덱스 개별적으로 free할 수 없고,  
 
-배열에서 사용이 끝난 모든 객체를 한번에 free하고 새로운 배열을 만들 수 밖에 없다는 점이데,
+배열에서 사용이 끝난 모든 객체를 한번에 free하고 새로운 배열을 만들 수 밖에 없다는 점이데,  
 
-이걸 GC 때 하면 되겠네요? 그래서 이걸 사용합니다.
+이걸 GC 때 하면 되겠네요? 그래서 이걸 사용합니다.  
 
-**TLAB에 이 방식을 적용한다면 메모리를 할당하는데 O(1)의 시간복잡도를 가집니다.**
+**TLAB에 이 방식을 적용한다면 메모리를 할당하는데 O(1)의 시간복잡도를 가집니다.**  
 
-여담이지만, 비슷한 걸 러스트에도 구현한 라이브러리가 있습니다.
+여담이지만, 비슷한 걸 러스트에도 구현한 라이브러리가 있습니다.  
 
-[github.com/fitzgen/bumpalo](https://github.com/fitzgen/bumpalo)
+[github.com/fitzgen/bumpalo](https://github.com/fitzgen/bumpalo)  
 
 #### **Mark & Sweep 알고리즘**
 
-GC의 기본 베이스가 되는 알고리즘이며, 여러 형태가 있습니다.
+GC의 기본 베이스가 되는 알고리즘이며, 여러 형태가 있습니다.  
 
-제일 쉬운 Mark & Sweep 알고리즘은 할당 리스트를 사용합니다.
+제일 쉬운 Mark & Sweep 알고리즘은 할당 리스트를 사용합니다.  
 
-할당 리스트에는 마킹 비트, 회수되지 않은 객체를 가르키는 포인터가 들어있고,
+할당 리스트에는 마킹 비트, 회수되지 않은 객체를 가르키는 포인터가 들어있고,  
 
-그래프 형태를 띕니다.
+그래프 형태를 띕니다.  
 
-![](/images/blog/gc-jvm-garbage-collector/img_2.png)
 
-과정은 다음과 같으며. dfs로 탐색합니다.
 
-1\. 할당 리스트를 순회하며 마크 비트 초기화
+<PostImage src="/images/blog/gc-jvm-garbage-collector/img_2.png" alt="" />
+
+
+
+과정은 다음과 같으며. dfs로 탐색합니다.  
+
+1\. 할당 리스트를 순회하며 마크 비트 초기화  
 
 2. root부터 살아있는 객체 확인
 
-3\. 찾은 객체마다 마크 비트 값 세팅
+3\. 찾은 객체마다 마크 비트 값 세팅  
 
-4\. 세팅되지 않은 객체는 힙에서 삭제 (free)
+4\. 세팅되지 않은 객체는 힙에서 삭제 (free)  
 
-이 과정을 거친 후 살아있는 객체들로만 이루어진 그래프를 **라이브 객체 그래프**라고 합니다.
+이 과정을 거친 후 살아있는 객체들로만 이루어진 그래프를 **라이브 객체 그래프**라고 합니다.  
 
 ### **마치며**
 
-간단히 GC가 어떻게 이루어져있는지 알아보았습니다. 막상 글을 쓰고나니 점점 내용이 길어지네요.
+간단히 GC가 어떻게 이루어져있는지 알아보았습니다. 막상 글을 쓰고나니 점점 내용이 길어지네요.  
 
-다음에는 JVM에서 GC 종류와 작동원리에 대해 알아보겠습니다.
+다음에는 JVM에서 GC 종류와 작동원리에 대해 알아보겠습니다.  
 
 ## **- Reference**
 
-[www.yes24.com/Product/Goods/72161685](http://www.yes24.com/Product/Goods/72161685)
+[www.yes24.com/Product/Goods/72161685](http://www.yes24.com/Product/Goods/72161685)  
 
- [자바 최적화
+ [자바 최적화  
 
-자바 애플리케이션 성능을 한 단계 높여줄 튜닝 이야기 성능 튜닝은 실험과학이다. 추측과 구전 튜닝에 의존할 일이 아니다. 이 책은 복잡한 기술 스택을 다루는 중/고급 자바 개발자에게 정량적
+자바 애플리케이션 성능을 한 단계 높여줄 튜닝 이야기 성능 튜닝은 실험과학이다. 추측과 구전 튜닝에 의존할 일이 아니다. 이 책은 복잡한 기술 스택을 다루는 중/고급 자바 개발자에게 정량적  
 
-www.yes24.com](http://www.yes24.com/Product/Goods/72161685)
+www.yes24.com](http://www.yes24.com/Product/Goods/72161685)  
 
-[ropas.snu.ac.kr/lib/dock/Zo1990.pdf](http://ropas.snu.ac.kr/lib/dock/Zo1990.pdf)
+[ropas.snu.ac.kr/lib/dock/Zo1990.pdf](http://ropas.snu.ac.kr/lib/dock/Zo1990.pdf)  

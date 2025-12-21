@@ -8,80 +8,106 @@ draft: false
 image: ~/assets/images/thumbnail/pinpoint-integration.png
 ---
 
+import PostImage from '~/components/blog/PostImage.astro';
+
 ## 배경
 
-주말이나 퇴근시간에 짬짬히 사이드 프로젝트를 진행하고 있었는데
+주말이나 퇴근시간에 짬짬히 사이드 프로젝트를 진행하고 있었는데  
 
-문득 이 사이드 프로젝트가 공개되었을 때 장애에 대비하기 위해,
+문득 이 사이드 프로젝트가 공개되었을 때 장애에 대비하기 위해,  
 
-그리고 무엇보다 회사에 **APM**이 없어서 이를 적용해보고 싶다는 생각에
+그리고 무엇보다 회사에 **APM**이 없어서 이를 적용해보고 싶다는 생각에  
 
-연습삼아 사이드 프로젝트에 핀포인트를 도입하였습니다.
+연습삼아 사이드 프로젝트에 핀포인트를 도입하였습니다.  
 
-(정시 퇴근을 위한 눈물겨운 노력)
+(정시 퇴근을 위한 눈물겨운 노력)  
 
 > 사이드 프로젝트 소개는 팀원의 블로그로 대체합니다 [deveric.tistory.com/114](https://deveric.tistory.com/114) (나도 써야지..)
 
-핀포인트 개념과 설치 방법은 추후 작성에 작성할 예정입니다.
+핀포인트 개념과 설치 방법은 추후 작성에 작성할 예정입니다.  
 
-![](/images/blog/pinpoint-integration/img.png)
+
+
+<PostImage src="/images/blog/pinpoint-integration/img.png" alt="" />
+
+
 
 ### 핀포인트란?
 
-[pinpoint-apm.github.io/pinpoint/index.html](https://pinpoint-apm.github.io/pinpoint/index.html)
+[pinpoint-apm.github.io/pinpoint/index.html](https://pinpoint-apm.github.io/pinpoint/index.html)  
 
-네이버에서 만든 대규모 분산 시스템의 성능을 분석하고 문제를 진단, 처리하는 플랫폼입니다.
+네이버에서 만든 대규모 분산 시스템의 성능을 분석하고 문제를 진단, 처리하는 플랫폼입니다.  
 
-실시간으로 어플리케이션의 요청을 모니터링할 수 있으며,
+실시간으로 어플리케이션의 요청을 모니터링할 수 있으며,  
 
-이를 통해 개발자가 한눈에 서버 상태에 대해 알 수 있게 해줍니다.
+이를 통해 개발자가 한눈에 서버 상태에 대해 알 수 있게 해줍니다.  
 
-이러한 툴을 **APM** (Application Performance Management) 이라고 합니다.
+이러한 툴을 **APM** (Application Performance Management) 이라고 합니다.  
 
 ## 장점
 
-다음은 Pinpoint를 프로젝트에 도입하면서 겪을 수 있었던 장점들이었습니다.
+다음은 Pinpoint를 프로젝트에 도입하면서 겪을 수 있었던 장점들이었습니다.  
 
 ### 1. 토폴로지 형태로 상태 표시
 
-핀포인트를 실제로 어디서 어디로 서버들이 통신하고 있는지,
+핀포인트를 실제로 어디서 어디로 서버들이 통신하고 있는지,  
 
-한번에 파악할 수 있도록 시각화 해주는 대시보드를 제공합니다.
+한번에 파악할 수 있도록 시각화 해주는 대시보드를 제공합니다.  
 
-제가 적용한 사이드 프로젝트같은 경우, 서버가 하나밖에 없어서 미비해보이지만
+제가 적용한 사이드 프로젝트같은 경우, 서버가 하나밖에 없어서 미비해보이지만  
 
-MSA와 같이 여러 종류의 다른 서버들이 떠있을 경우 이를 추적하기는 매우 어렵습니다.
+MSA와 같이 여러 종류의 다른 서버들이 떠있을 경우 이를 추적하기는 매우 어렵습니다.  
 
-핀포인트는 이러한 토폴로지 형태의 UI를 제공해 어느정도 이를 해소해줍니다.
+핀포인트는 이러한 토폴로지 형태의 UI를 제공해 어느정도 이를 해소해줍니다.  
 
-![](/images/blog/pinpoint-integration/img_1.png)
+
+
+<PostImage src="/images/blog/pinpoint-integration/img_1.png" alt="" />
+
+
 
 ### 2. Callstack Trace와 TPS 표시
 
-Pinpoint를 적용하고 나서 제일 마음에 들었던점은 에러 발생시 **코드 레벨의 callstack**을 보여주는 점.
+Pinpoint를 적용하고 나서 제일 마음에 들었던점은 에러 발생시 **코드 레벨의 callstack**을 보여주는 점.  
 
-그리고 서버의 모니터링 지표를 보여준다는 점이였습니다.
+그리고 서버의 모니터링 지표를 보여준다는 점이였습니다.  
 
-JVM에서 GC가 언제 발생했는지, CPU와 메모리 상태는 어떤지 등을 한눈에 보여줍니다.
+JVM에서 GC가 언제 발생했는지, CPU와 메모리 상태는 어떤지 등을 한눈에 보여줍니다.  
 
-![](/images/blog/pinpoint-integration/img_2.png)
 
-![](/images/blog/pinpoint-integration/img_3.png)
+
+<PostImage src="/images/blog/pinpoint-integration/img_2.png" alt="" />
+
+
+
+
+
+<PostImage src="/images/blog/pinpoint-integration/img_3.png" alt="" />
+
+
 
 ### 3. 장애 발생시 Email, SNS등을 통한 알람기능
 
-핀포인트에 내장된 알람기능을 사용하면 장애 발생시 개발자에게 이메일이나 SNS등의 매개체를 통해
+핀포인트에 내장된 알람기능을 사용하면 장애 발생시 개발자에게 이메일이나 SNS등의 매개체를 통해  
 
-즉시 해당 내용에 대해 인지할 수 있도록 도와줍니다.
+즉시 해당 내용에 대해 인지할 수 있도록 도와줍니다.  
 
-Email 같은 경우는 기본 설정만 수정하면 되지만,
+Email 같은 경우는 기본 설정만 수정하면 되지만,  
 
-SNS 같은 경우 직접 구현체를 만들어줘야하기 때문에 Email만 사용하였습니다.
+SNS 같은 경우 직접 구현체를 만들어줘야하기 때문에 Email만 사용하였습니다.  
 
-데드락 발생, 메모리, CPU 사용량 일정 수준 도달등에 대한 알림을 받을 수 있습니다.
+데드락 발생, 메모리, CPU 사용량 일정 수준 도달등에 대한 알림을 받을 수 있습니다.  
 
-![](/images/blog/pinpoint-integration/img_4.png)
-![](/images/blog/pinpoint-integration/img_5.png)
+
+
+<PostImage src="/images/blog/pinpoint-integration/img_4.png" alt="" />
+
+
+
+
+<PostImage src="/images/blog/pinpoint-integration/img_5.png" alt="" />
+
+
 
 ## 도입하며 겪은 이슈
 
@@ -89,112 +115,140 @@ SNS 같은 경우 직접 구현체를 만들어줘야하기 때문에 Email만 �
 
 > bootBuildImage로 도커 이미지를 만들때 조심하자
 
-정확히는 핀포인트의 문제라기보다는 spring boot 2.3.0부터 지원하는 컨테이버 이미지 빌드를
+정확히는 핀포인트의 문제라기보다는 spring boot 2.3.0부터 지원하는 컨테이버 이미지 빌드를  
 
-사용해서 발생한 문제였습니다. **(bootBuildImage)**
+사용해서 발생한 문제였습니다. **(bootBuildImage)**  
 
-하지만 이 문제를 핀포인트로 해결하여 기록하였습니다.
+하지만 이 문제를 핀포인트로 해결하여 기록하였습니다.  
 
 #### [상황]
 
-서버에 javaagent를 통해 핀포인트 에이전트를 추가한 후 서버를 구동하니 일정시간 가동하다
+서버에 javaagent를 통해 핀포인트 에이전트를 추가한 후 서버를 구동하니 일정시간 가동하다  
 
-**OOM**이 발생하며 가동이 중단되는 문제가 있었습니다.
+**OOM**이 발생하며 가동이 중단되는 문제가 있었습니다.  
 
-실제로 핀포인트를 확인하니 **Major GC**가 **20초**가량 작동하다 이후 완전히 서버가 종료된 것을
+실제로 핀포인트를 확인하니 **Major GC**가 **20초**가량 작동하다 이후 완전히 서버가 종료된 것을  
 
-확인 할 수 있었습니다.
+확인 할 수 있었습니다.  
 
 > 그런데 뭔가 이상합니다. heap 메모리는 한참 남는데 왜 Major GC가 작동하는 걸까요?
 
-![](/images/blog/pinpoint-integration/img_6.png)
 
-로그를 확인해보니 Metaspace 영역에서 OOM이 발생하였던 것을 확인할 수 있습니다.
 
-이때까지만 해도 Metaspace에 Limit 값을 설정하지 않았기 때문에 왜 이런 상황이 발생하는지
+<PostImage src="/images/blog/pinpoint-integration/img_6.png" alt="" />
 
-의아했습니다.
 
-![](/images/blog/pinpoint-integration/img_7.png)
 
-![](/images/blog/pinpoint-integration/img_8.png)
+로그를 확인해보니 Metaspace 영역에서 OOM이 발생하였던 것을 확인할 수 있습니다.  
 
-다시 핀포인트로 돌아가서 확인해보니 **-XX:MaxMetaspaceSize** 인자를 통해
+이때까지만 해도 Metaspace에 Limit 값을 설정하지 않았기 때문에 왜 이런 상황이 발생하는지  
 
-Metaspace 영역이 약 140메가로 제한이 걸려있는것을 확인 할 수 있었습니다.
+의아했습니다.  
 
-그럼 이 설정값은 누가 어디서 건 걸까요?
+
+
+<PostImage src="/images/blog/pinpoint-integration/img_7.png" alt="" />
+
+
+
+
+
+<PostImage src="/images/blog/pinpoint-integration/img_8.png" alt="" />
+
+
+
+다시 핀포인트로 돌아가서 확인해보니 **-XX:MaxMetaspaceSize** 인자를 통해  
+
+Metaspace 영역이 약 140메가로 제한이 걸려있는것을 확인 할 수 있었습니다.  
+
+그럼 이 설정값은 누가 어디서 건 걸까요?  
 
 #### [원인]
 
-Spring Boot Gradle Plugin 으로 **bootBuildImage** Task를 사용하여 이미지를 빌드 할 경우,
+Spring Boot Gradle Plugin 으로 **bootBuildImage** Task를 사용하여 이미지를 빌드 할 경우,  
 
-CloudFoundry 에서 만든 [[자바 빌드팩 메모리 계산기]](https://github.com/cloudfoundry/java-buildpack-memory-calculator)로 휴리스틱하게 메모리 사용 예상치를
+CloudFoundry 에서 만든 [[자바 빌드팩 메모리 계산기]](https://github.com/cloudfoundry/java-buildpack-memory-calculator)로 휴리스틱하게 메모리 사용 예상치를  
 
-계산해서 그 값으로 LIMIT를 걸어버립니다. (heap, non-head 영역 모두)
+계산해서 그 값으로 LIMIT를 걸어버립니다. (heap, non-head 영역 모두)  
 
-(Metaspace 외에 계산 공식은 링크에 있습니다.)
+(Metaspace 외에 계산 공식은 링크에 있습니다.)  
 
-![](/images/blog/pinpoint-integration/img_9.png)
 
-Metaspace 게산 공식대로 서버 실행시 나타난 **loaded class count**를 통해 계산해보니
 
-위의 핀포인트에서 확인한 값과 근사한 값이 나온것을 확인할 수 있었습니다.
+<PostImage src="/images/blog/pinpoint-integration/img_9.png" alt="" />
 
-![](/images/blog/pinpoint-integration/img_11.png)
-![](/images/blog/pinpoint-integration/img_12.png)
 
-(빌드 시점의 loaded class count로 계산했을것이니 약간의 차이가 있습니다)
 
-하지만 핀포인트는 javaagent를 통해 서버에서 핀포인트 서버로 메트릭 정보들을 보내는데,
+Metaspace 게산 공식대로 서버 실행시 나타난 **loaded class count**를 통해 계산해보니  
 
-빌드시에는 javaagent를 추가하지 않았기 때문에 **예측했던 metaspace 영역** 사용치보다,
+위의 핀포인트에서 확인한 값과 근사한 값이 나온것을 확인할 수 있었습니다.  
 
-**실제로 더 많은 메모리를 사용**해서 발생한 문제였습니다.
 
-결국 metaspace 영역의 메모리 허용 최대치를 늘림으로써 문제를 해결하였습니다.
 
-[[핀포인트 이슈]](http://github.com/pinpoint-apm/pinpoint/issues/3289)에서도 핀포인트는 자바에이전트로 동작하기 때문에
+<PostImage src="/images/blog/pinpoint-integration/img_11.png" alt="" />
 
-메모리를 더 사용한다는 답변이 있습니다.
+
+
+
+<PostImage src="/images/blog/pinpoint-integration/img_12.png" alt="" />
+
+
+
+(빌드 시점의 loaded class count로 계산했을것이니 약간의 차이가 있습니다)  
+
+하지만 핀포인트는 javaagent를 통해 서버에서 핀포인트 서버로 메트릭 정보들을 보내는데,  
+
+빌드시에는 javaagent를 추가하지 않았기 때문에 **예측했던 metaspace 영역** 사용치보다,  
+
+**실제로 더 많은 메모리를 사용**해서 발생한 문제였습니다.  
+
+결국 metaspace 영역의 메모리 허용 최대치를 늘림으로써 문제를 해결하였습니다.  
+
+[[핀포인트 이슈]](http://github.com/pinpoint-apm/pinpoint/issues/3289)에서도 핀포인트는 자바에이전트로 동작하기 때문에  
+
+메모리를 더 사용한다는 답변이 있습니다.  
 
 #### [결론]
 
 > **metaspace 영역이 예측했던 사용치보다 부족해서 OOM이 발생**
 
-**기타) 이때 Major GC는 왜 동작했는가?**
+**기타) 이때 Major GC는 왜 동작했는가?**  
 
-Metaspace가 초과하면 바로 서버가 죽어야한다고 생각했지만 [[오라클 공식 문서]](https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html#BABFAFAE) 를 확인해보면
+Metaspace가 초과하면 바로 서버가 죽어야한다고 생각했지만 [[오라클 공식 문서]](https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html#BABFAFAE) 를 확인해보면  
 
-최초로 metaspace 영역이 초과하게되면 GC를 수행한다고 명시되어 있습니다.
+최초로 metaspace 영역이 초과하게되면 GC를 수행한다고 명시되어 있습니다.  
 
 > -XX:MetaspaceSize=size
 > Sets the size of the allocated class metadata space that will trigger a garbage collection the first time it is exceeded. This threshold for a garbage collection is increased or decreased depending on the amount of metadata used. The default size depends on the platform
 
-![](/images/blog/pinpoint-integration/img_10.png)
 
-(non-heap은 metaspace 외에도 call stack이나 JIT 컴파일러등이 사용하는 기타 메모리양의 총합입니다)
+
+<PostImage src="/images/blog/pinpoint-integration/img_10.png" alt="" />
+
+
+
+(non-heap은 metaspace 외에도 call stack이나 JIT 컴파일러등이 사용하는 기타 메모리양의 총합입니다)  
 
 ### 2. Pinpoint 접근 권한 제어?
 
-[github.com/pinpoint-apm/pinpoint/issues/4476](https://github.com/pinpoint-apm/pinpoint/issues/4476)
+[github.com/pinpoint-apm/pinpoint/issues/4476](https://github.com/pinpoint-apm/pinpoint/issues/4476)  
 
-[Security - User authentication · Issue #4476 · pinpoint-apm/pinpoint
+[Security - User authentication · Issue #4476 · pinpoint-apm/pinpoint  
 
-Hi, does Pinpoint support a user authentication module, to allow them to access the tool? Thank's
+Hi, does Pinpoint support a user authentication module, to allow them to access the tool? Thank's  
 
-github.com](https://github.com/pinpoint-apm/pinpoint/issues/4476)
+github.com](https://github.com/pinpoint-apm/pinpoint/issues/4476)  
 
-pinpoint는 따로 ACL과 같은 접근권한을 설정 할 수 없습니다.
+pinpoint는 따로 ACL과 같은 접근권한을 설정 할 수 없습니다.  
 
-인프라 방화벽이나, 따로 로그인 페이지를 만들어서 리다이랙션하는 방향으로 적용해야할 것 같네요
+인프라 방화벽이나, 따로 로그인 페이지를 만들어서 리다이랙션하는 방향으로 적용해야할 것 같네요  
 
 ## 마치며
 
-핀포인트를 적용하며 평소에 운영서버에서 확인하기 힘들었던 많은 정보들을 알 수 있었습니다.
+핀포인트를 적용하며 평소에 운영서버에서 확인하기 힘들었던 많은 정보들을 알 수 있었습니다.  
 
-사실 회사에서 적용시키면 좋겠다는 생각으로 사이드 프로젝트에 연습용으로 적용했었는데
+사실 회사에서 적용시키면 좋겠다는 생각으로 사이드 프로젝트에 연습용으로 적용했었는데  
 
-만족스럽네요.
+만족스럽네요.  
 
-나중에 기회가 된다면 회사 서비스에도 적용 할 수 있었으면 좋겠습니다.
+나중에 기회가 된다면 회사 서비스에도 적용 할 수 있었으면 좋겠습니다.  

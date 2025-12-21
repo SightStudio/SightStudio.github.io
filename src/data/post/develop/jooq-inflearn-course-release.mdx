@@ -8,45 +8,50 @@ draft: false
 image: ~/assets/images/thumbnail/jooq-inflearn-course-release.png
 ---
 
-[**https://inf.run/2Fxib**](https://inf.run/2Fxib)
+import PostImage from '~/components/blog/PostImage.astro';
+
+[**https://inf.run/2Fxib**](https://inf.run/2Fxib)  
 
 ## 1. 인프런에 jOOQ 강의를 출시했다.
 
-올해 컨퍼런스에서 발표를 하고, 인프런 강의를 출시하며
-jOOQ에 대해 가지고 있던 개인적인 생각들을 정리해보고 마무리해보려합니다. (주저리 주저리...)
-(사실 JPA가 불편하다고 글을 쓸땐 살짝 무섭습니다. ㅎㅎ)
+올해 컨퍼런스에서 발표를 하고, 인프런 강의를 출시하며  
+jOOQ에 대해 가지고 있던 개인적인 생각들을 정리해보려합니다. (주저리 주저리...)  
+(사실 JPA가 불편하다고 글을 쓸땐 살짝 무섭습니다. ㅎㅎ)  
 
-![인프런 jOOQ 강의](/images/blog/jooq-inflearn-course-release/img.png)
+
+<PostImage src="/images/blog/jooq-inflearn-course-release/img.png" alt="인프런 jOOQ 강의">
+  <span slot="caption">인프런 jOOQ 강의</span>
+</PostImage>
 
 ## 2. 여태까지 jOOQ를 사용하며 고민한 글
 
-2021년에 처음 jOOQ 글을 쓴걸보니 벌써 3년이 지났습니다. 시간 참 빠르네요.
+2021년에 처음 jOOQ 글을 쓴걸보니 벌써 3년이 지났습니다. 시간 참 빠르네요.  
 
-1탄. [[입문] jOOQ에 대해 알아보자](https://sightstudio.tistory.com/54)
-2탄. [jOOQ를 좀 더 알아보자](https://sightstudio.tistory.com/66)
-3탄. [jOOQ를 JPA와 같이 써보자](https://sightstudio.tistory.com/68)
+- 1탄. [[입문] jOOQ에 대해 알아보자](https://sightstudio.tistory.com/54)
+- 2탄. [jOOQ를 좀 더 알아보자](https://sightstudio.tistory.com/66)
+- 3탄. [jOOQ를 JPA와 같이 써보자](https://sightstudio.tistory.com/68)
 
 ## 3. 왜 MyBatis도 아니고, JPA도 아닌 jOOQ인가?
 
-jOOQ는 쥬크라고 읽습니다. JOOQ도 아니고 Jooq도 아니고 jOOQ입니다.
+jOOQ는 쥬크라고 읽습니다. JOOQ도 아니고 Jooq도 아니고 jOOQ입니다.  
 
-필자는 약 2021년부터 지금까지 jOOQ를 사용해 왔습니다.
-먼저 나서서 팀에 도입하기도 했고, 도입하기 위해 사내에서 발표도 여러번 했습니다.
-특히 현재 회사와서는 조직개편 때문에 팀이 여러 번 바뀌어 2년간 jOOQ 발표만 세 번이나 했네요.
+필자는 약 2021년부터 지금까지 jOOQ를 사용해 왔습니다.  
+먼저 나서서 팀에 도입하기도 했고, 도입하기 위해 사내에서 발표도 여러번 했습니다.  
+특히 현재 회사와서는 조직개편 때문에 팀이 여러 번 바뀌어 2년간 jOOQ 발표만 세 번이나 했네요.  
 
-왜 이렇게까지 jOOQ를 알리려 했냐면
-자바진영에서 사용하는 데이터베이스 접근 기술 중에서 jOOQ가 제일 편했기 때문입니다..
+왜 이렇게까지 jOOQ를 알리려 했냐면  
+자바진영에서 사용하는 데이터베이스 접근 기술 중에서 jOOQ가 제일 편했기 때문입니다..  
 
-MyBatis를 사용하면서 문자열 기반의 쿼리작성과 XML 작업에 고통스러웠고,
-JPA를 써도 모든 부분이 만족스럽지는 않았습니다.
+MyBatis를 사용하면서 문자열 기반의 쿼리작성과 XML 작업에 고통스러웠고,  
+JPA를 써도 모든 부분이 만족스럽지는 않았습니다.  
 
-혹시 마이바티스를 쓰면서
+**혹시 마이바티스를 쓰면서**  
 
 - 내가 작성한 쿼리가 구문 오류로 운영에서 장애알림이 울렸다거나
 - insert, update에서 값을 입력해야 할 컬럼이 10개가 넘어가는데 일일히 순서맞춰서 값을 넣어줘야한다거나
 - 조금 더 객체지향적으로 쓰려고 조회 결과를 nested하게 가져오려 했다가 수많은 XML 작업을 했거나
 
-또는 JPA를 쓰면서
+**또는 JPA를 쓰면서**  
 
 - 양방향 연관관계를 사용하다 고통을 받았다던가
 - 도메인 엔티티와 퍼시스턴스 엔티티가 분리되지 않아 여러 문제를 겪었다거나
@@ -55,117 +60,132 @@ JPA를 써도 모든 부분이 만족스럽지는 않았습니다.
 - 영속성 컨텍스트를 위해 트랜잭션의 범위가 필요 이상으로 넓어져버린 코드를 마주하게 된다던가.
 - fetch join 때문에 쿼리 메서드를 호출 할 때마다 불안해서 일일이 메서드 구현체를 확인해야 한다던가.
 
-하는 경험이 있었나요?
-필자는 솔직히 마지막 부분이 JPA에서 제일 싫었습니다.
+하는 경험이 있었나요?  
+필자는 솔직히 마지막 부분이 JPA에서 제일 싫었습니다.  
 
-**현업에서 FetchType.LAZY을 fetch join 하는 부분은, 적어도 저에겐 악몽과도 같이 느껴졌습니다.**
+**현업에서 FetchType.LAZY을 fetch join 하는 부분은, 적어도 저에겐 악몽과도 같이 느껴졌습니다.**  
 
-이걸 런타임에 실행하면서 하나하나 확인해야 한다는 건... MyBatis와 무엇이 다른가? 라는 생각이 들었고
-연관관계가 복잡하고 테이블이 수백개씩되는 RDB에서 이 단점은 너무나도 크게 다가왔습니다.
-JPA에서 복잡한 조회를 하면 생각보다 많은 고통을 받았습니다.
+이걸 런타임에 실행하면서 하나하나 확인해야 한다는 건... MyBatis와 무엇이 다른가? 라는 생각이 들었고  
+연관관계가 복잡하고 테이블이 수백개씩되는 RDB에서 이 단점은 너무나도 크게 다가왔습니다.  
+JPA에서 복잡한 조회를 하면 생각보다 많은 고통을 받았습니다.  
 
-**라고 장황하게 써놨지만 상단 강의에 있는 미리보기 영상에서 간단하게 설명해놨습니다 :)**
+**라고 장황하게 써놨지만 상단 강의에 있는 미리보기 영상에서 간단하게 설명해놨습니다 :)**  
 
-![JPA vs jOOQ](/images/blog/jooq-inflearn-course-release/img_1.png)
+
+
+<PostImage src="/images/blog/jooq-inflearn-course-release/img_1.png" alt="JPA vs jOOQ">
+  <span slot="caption">JPA vs jOOQ</span>
+</PostImage>
+
+
 
 ## 4. jOOQ는 뭐가 그리 좋나
 
 ### (팀원들의) 낮은 학습 곡선
 
-제일 맘에 들었던건 사용하는 팀원들에게 요구되는 학습 곡선이였습니다.
-**팀원이 SQL을 사용 할 줄 안다면, 팀원은 jOOQ를 사용 할 줄 안다고 봐도됩니다.**
-N+1 문제? 영속성 컨텍스트? 프록시? jOOQ에서는 그런거 고민 할 필요가 없습니다.
-정직하게 내가 (자바코드로) 작성한 SQL에 대한 결과를 받아 올 수 있고,
-java의 stream 연산을 통해 쉽게 그루핑해서 1:N 형태로도 가져 올 수 있습니다.
+제일 맘에 들었던건 사용하는 팀원들에게 요구되는 학습 곡선이였습니다.  
+**팀원이 SQL을 사용 할 줄 안다면, 팀원은 jOOQ를 사용 할 줄 안다고 봐도됩니다.**  
+N+1 문제? 영속성 컨텍스트? 프록시? jOOQ에서는 그런거 고민 할 필요가 없습니다.  
+정직하게 내가 (자바코드로) 작성한 SQL에 대한 결과를 받아 올 수 있고,  
+java의 stream 연산을 통해 쉽게 그루핑해서 1:N 형태로도 가져 올 수 있습니다.  
 
 ### SQL 작성이 재밌음
 
-JPA를 쓰면서 사용했던 쿼리 작성에 대한 편의기능들이 대부분 jOOQ에도 있습니다.
-(다만 ORM이 아니니 연관관계 같은건 없습니다.)
+JPA를 쓰면서 사용했던 쿼리 작성에 대한 편의기능들이 대부분 jOOQ에도 있습니다.  
+(다만 ORM이 아니니 연관관계 같은건 없습니다.)  
 
-하지만 이건 SQL이니 JPA에서 못쓰던 bulk insert, FROM절 서브쿼리, 옵티마이저 & 인덱스 힌트
-모두 jOOQ에서 쓸 수 있습니다.
+하지만 이건 SQL이니 JPA에서 못쓰던  
+bulk insert, FROM 절 서브쿼리, 옵티마이저 & 인덱스 힌트    
+모두 jOOQ에서 쓸 수 있습니다.  
 
-간단한 crud는 generated dao나 activeRecord를 통해 처리하면,
-일일히 쿼리를 작성하지 않아도 된다는게 제일 좋았습니다.
+간단한 CRUD는 generated dao나 activeRecord를 통해 처리하면,  
+일일히 쿼리를 작성하지 않아도 되는 점이 제일 좋았습니다.  
 
 ## 5. 그냥 QueryDSL 쓰면 되는거 아닌가?
 
-jOOQ의 [maven 레포](https://mvnrepository.com/artifact/org.jooq/jooq)와 QueryDSL-SQL의 [maven 레포](https://mvnrepository.com/artifact/com.querydsl/querydsl-sql)를 비교해보았습니다.
-(항상 강조하지만 jOOQ의 경쟁자는 QueryDSL-JPA가 아니라 QueryDSL-SQL입니다.)
+jOOQ의 [maven 레포](https://mvnrepository.com/artifact/org.jooq/jooq)와 QueryDSL-SQL의 [maven 레포](https://mvnrepository.com/artifact/com.querydsl/querydsl-sql)를 비교해보았습니다.  
+(항상 강조하지만 jOOQ의 경쟁자는 QueryDSL-JPA가 아니라 QueryDSL-SQL입니다.)  
 
-릴리즈 주기가 한쪽은 계속 이어져 있고, 한쪽은 뜸하지 않나요?
-이 둘의 제일 큰 차이점은 dual license 여부입니다.
+릴리즈 주기가 한쪽은 계속 이어져 있고, 한쪽은 뜸하지 않나요?  
+이 둘의 제일 큰 차이점은 dual license 여부입니다.  
 
-[jOOQ 공식 블로그글에서 정리된 내용과 같이](https://business.jooq.org/making-money-when-all-the-industry-wants-is-free-beer/)
-**"상용 DB에서 돈을 받아서 오픈소스DB에는 오픈소스를 유지할 수 있게 한다."**
-이 정책이 굉장히 마음에 들었고 실제로도 잘 워킹했습니다.
-jOOQ는 지난 14년간 꾸준히 프로젝트가 유지 될 수 있었으니 말이죠.
+[jOOQ 공식 블로그글에서 정리된 내용과 같이](https://business.jooq.org/making-money-when-all-the-industry-wants-is-free-beer/)  
 
-반대로 QueryDSL은 전부 무료이고, 이로 인해 유지보수 비용을 메인테이너 혼자 감당해야했기 때문에
-유지보수 주체가 두번이나 바뀌었습니다. (현재는 [OpenFeign](https://github.com/OpenFeign/querydsl)으로 보이네요.)
+> **상용 DB에서 돈을 받아서 오픈소스DB에는 오픈소스를 유지할 수 있게 한다.**  
 
-이는 비단 QueryDSL만의 문제는 아닙니다.
-많은 오픈소스에서 생계를 이유로 프로젝트가 방치되는 경우는 종종 있습니다. [(예시)](https://github.com/final-form/react-final-form)
+이 정책이 굉장히 마음에 들었고 실제로도 잘 워킹했습니다.  
+jOOQ는 지난 14년간 꾸준히 프로젝트가 유지 될 수 있었으니 말이죠.  
 
-![jOOQ vs QueryDSL](/images/blog/jooq-inflearn-course-release/img_2.png)
+반대로 QueryDSL은 전부 무료이고, 이로 인해 유지보수 비용을 메인테이너 혼자 감당해야했기 때문에  
+유지보수 주체가 두번이나 바뀌었습니다. (현재는 [OpenFeign](https://github.com/OpenFeign/querydsl)으로 보이네요.)  
+
+이는 비단 QueryDSL만의 문제는 아닙니다.  
+많은 오픈소스에서 생계를 이유로 프로젝트가 방치되는 경우는 종종 있습니다. [(예시)](https://github.com/final-form/react-final-form)  
+
+<PostImage src="/images/blog/jooq-inflearn-course-release/img_2.png" width={600} align="center">
+  <span slot="caption">깃헙 Star 수가 많은것과 프로젝트의 지속가능성은 상관이 없다.</span>
+</PostImage>
 
 ## 6. jOOQ는 단점이 없나?
 
-물론 jOOQ가 단점이 아예 없는건 아닙니다. 다음은 jOOQ를 사용하며 겪었던 단점들입니다.
+물론 jOOQ가 단점이 아예 없는건 아닙니다. 다음은 jOOQ를 사용하며 겪었던 단점들입니다.  
 
 ### 팀원의 학습곡선이 적댔지, 도입하는 사람의 학습곡선이 적다곤 하지 않았다.
 
-jOOQ는 모든 문제를 code generation 단계에서 정의해서 컴파일 타임에 에러를 발생시킵니다.
-정말 좋은 방식이지만, 그러다 보니 다른 기술보다 초기 프로젝트 세팅에서 상당한 난이도를 자랑합니다.
-(그래서 최초도입하는 사람이 십자가를 져야합니다. 보통은... 제가 되었습니다 ㅎㅎ)
+jOOQ는 모든 문제를 code generation 단계에서 정의해서 컴파일 타임에 에러를 발생시킵니다.  
+정말 좋은 방식이지만, 그러다 보니 다른 기술보다 초기 프로젝트 세팅에서 상당한 난이도를 자랑합니다.  
+(그래서 최초도입하는 사람이 십자가를 져야합니다. 보통은... 제가 되었습니다 ㅎㅎ)  
 
-강의를 낸 것도 이 문제를 해결하기 위한 일환 중 하나라고 생각했습니다.
-필자도 어려워서 이걸 원작자한테까지 가서 물어보기도 했구요. [[삽질기]](https://sightstudio.tistory.com/68)
-그래도 플러그인들 지원이 잘되서 처음 jOOQ 환경설정 했을때보단 편해져서 이젠 쉽게 할 수 있을것같네요.
+강의를 낸 것도 이 문제를 해결하기 위한 일환 중 하나라고 생각했습니다.  
+필자도 어려워서 이걸 원작자한테까지 가서 물어보기도 했구요. [[삽질기]](https://sightstudio.tistory.com/68)  
+그래도 플러그인들 지원이 잘되서 처음 jOOQ 환경설정 했을때보단 편해져서 이젠 쉽게 할 수 있을것같네요.  
 
 ### 듀얼라이센스 - 상업용 DB에서 쓰려면 돈을 내야한다.
 
-[https://www.jooq.org/download/](https://www.jooq.org/download/)
-이렇게 장황하게 설명하면 왜 듀얼라이센스가 필요한지 설명이 되지만
-오라클, MSSQL 같은 상용 DB를 쓰려면 돈을 내야하는건 변하지 않는 사실이고, 회사를 설득해야만합니다.
-필자는 주로 MySQL과 PostgreSQL만 써서 라이센스를 구매해야하는 상황을 겪어보지는 못했지만
-개발자 한명당 인텔리제이 하나 더 사주는 정도의 비용을 회사에게 설명 할 수 있어야합니다.
+[https://www.jooq.org/download/](https://www.jooq.org/download/)  
+이렇게 장황하게 설명하면 왜 듀얼라이센스가 필요한지 설명이 되지만  
+오라클, MSSQL 같은 상용 DB를 쓰려면 돈을 내야하는건 변하지 않는 사실이고, 회사를 설득해야만합니다.  
+필자는 주로 MySQL과 PostgreSQL만 써서 라이센스를 구매해야하는 상황을 겪어보지는 못했지만  
+개발자 한명당 인텔리제이 하나 더 사주는 정도의 비용을 회사에게 설명 할 수 있어야합니다.  
 
-(생각보다 돈을 지불하는 고객사는 꽤 있는걸로 보이네요 ㅎㅎ)
-[https://www.jooq.org/customers](https://www.jooq.org/customers)
+(생각보다 돈을 지불하는 고객사는 꽤 있는걸로 보이네요 ㅎㅎ)  
+[https://www.jooq.org/customers](https://www.jooq.org/customers)  
 
 ## 인프런 강의를 찍으며 느낀점
 
-jOOQ는 강의를 찍는 입장에서는 정말 블루오션입니다.
-해외에서도 jOOQ 강의를 찾기 힘들고, 국내에는 아예 없었죠.
-(사실 jOOQ의 존재 자체도 잘 안알려지긴 했습니다.)
+jOOQ는 강의를 찍는 입장에서는 정말 블루오션입니다.  
+해외에서도 jOOQ 강의를 찾기 힘들고, 국내에는 아예 없었죠.  
+(사실 jOOQ의 존재 자체도 잘 안알려지긴 했습니다.)  
 
-그런 의미에서 강의를 만들었는데.
-혼자 공부하고 개념을 정리해가는것도 어려웠지만
-무엇보다도 강의 자체를 처음 찍어봤고, 영상 편집자체도 처음 해봐서 시행착오가 엄청 많았습니다.
-(특히 오디오 세팅이 조금 어려웠네요 ㅎㅎ)
+그런 의미에서 강의를 만들었는데.  
+혼자 공부하고 개념을 정리해가는것도 어려웠지만  
+무엇보다도 강의 자체를 처음 찍어봤고, 영상 편집자체도 처음 해봐서 시행착오가 엄청 많았습니다.  
+(특히 오디오 세팅이 조금 어려웠네요 ㅎㅎ)  
 
-다음에 또 새로운 강의 찍으라고하면 고민을 해봐야겠습니다 ㅎㅎㅎ...
+다음에 또 새로운 강의 찍으라고하면 고민을 해봐야겠습니다 ㅎㅎㅎ...  
 
-강의찍을 때 공부하려고 jOOQ 관련 원서도 샀었는데
-엄청 두꺼웠습니다. ㄷㄷ
+강의찍을 때 공부하려고 jOOQ 관련 원서도 샀었는데  
+엄청 두꺼웠습니다. ㄷㄷ  
 
-저자분 트위터도 한 jOOQ 하네요 ㅋㅋㅋ
+저자분 트위터도 한 jOOQ 하네요 ㅋㅋㅋ  
 
-![jOOQ 원서](/images/blog/jooq-inflearn-course-release/img_3.png)
+<PostImage src="/images/blog/jooq-inflearn-course-release/img_3.png" width={480} align="center">
+  <span slot="caption">jOOQ 원서</span>
+</PostImage>
 
-![저자 트위터](/images/blog/jooq-inflearn-course-release/img_4.png)
+<PostImage src="/images/blog/jooq-inflearn-course-release/img_4.png" width={480} align="center">
+  <span slot="caption">저자 트위터</span>
+</PostImage>
 
 ## 이후 행보
 
-사실 이 jOOQ를 써야하는 이유를 설득하는게 생각보다 에너지가 많이 들었습니다.
-그래도 불편함에 익숙해지기 보다는 개선점을 찾아내는게 중요하다고 생각됩니다.
+사실 이 jOOQ를 써야하는 이유를 설득하는게 생각보다 에너지가 많이 들었습니다.  
+그래도 불편함에 익숙해지기 보다는 개선점을 찾아내는게 중요하다고 생각됩니다.  
 
-사실 주크의 사용법을 다루자면 훨씬 더 많으나, 대부분은 jOOQ 문서만 봐도 충분히 활용 할 수 있어
-제일 중요한 DSL을 생성하는 방법, 필수적이고 개념적인 부분 위주로 강의를 구성하였습니다.
-(이렇게만 해도 만드는데 2.5달이 걸렸네요 ㅎㅎ)
+사실 주크의 사용법을 다루자면 훨씬 더 많으나, 대부분은 jOOQ 문서만 봐도 충분히 활용 할 수 있어  
+제일 중요한 DSL을 생성하는 방법, 필수적이고 개념적인 부분 위주로 강의를 구성하였습니다.  
+(이렇게만 해도 만드는데 2.5달이 걸렸네요 ㅎㅎ)  
 
-강의를 또 찍기보단 추가할게 생기면 해당 강의에 추가하는 방식으로 내용을 살을 붙이려합니다 ㅎㅎ
+강의를 또 찍기보단 추가할게 생기면 해당 강의에 추가하는 방식으로 내용을 살을 붙이려합니다 ㅎㅎ  
 
-이상으로 jOOQ 강의 찍은 후기였습니다...!
+이상으로 jOOQ 강의 찍은 후기였습니다...!  

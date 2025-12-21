@@ -8,35 +8,45 @@ draft: false
 image: ~/assets/images/thumbnail/spring-field-injection-bad.png
 ---
 
+import PostImage from '~/components/blog/PostImage.astro';
+
 ### **1. 도입**
 
-대부분 **Intellij**에서 다음과 같은 경고 때문에 이 글을 보고 있을 확률이 높습니다.
+대부분 **Intellij**에서 다음과 같은 경고 때문에 이 글을 보고 있을 확률이 높습니다.  
 
-왜 이럴까요?
+왜 이럴까요?  
 
-![](/images/blog/spring-field-injection-bad/img.png)
 
-또한, 자세히 보면 인텔리제이는 다음과 같이 설명합니다.
 
-![](/images/blog/spring-field-injection-bad/img_1.png)
+<PostImage src="/images/blog/spring-field-injection-bad/img.png" alt="" />
+
+
+
+또한, 자세히 보면 인텔리제이는 다음과 같이 설명합니다.  
+
+
+
+<PostImage src="/images/blog/spring-field-injection-bad/img_1.png" alt="" />
+
+
 
 * * *
 
 ### **2. 의존성 주입의 종류**
 
-[스프링 공식 레퍼런스](https://docs.spring.io/spring/docs/5.2.3.RELEASE/spring-framework-reference/core.html#beans-factory-collaborators)에서는 **Constructor Injection**과 **Setter Injection** 두 가지 만을 소개하고 있지만,
+[스프링 공식 레퍼런스](https://docs.spring.io/spring/docs/5.2.3.RELEASE/spring-framework-reference/core.html#beans-factory-collaborators)에서는 **Constructor Injection**과 **Setter Injection** 두 가지 만을 소개하고 있지만,  
 
-실제로 의존성 주입은
+실제로 의존성 주입은  
 
 *   생성자 기반 : Constructor-based dependency injection
 *   세터 기반    : Setter-based dependency injection
 *   필드 기반    : Field-based dependency injection
 
-와 같이 **3가지**로 구분되며, 보통 마지막 **Field Injection**을 제일 많이 사용합니다.
+와 같이 **3가지**로 구분되며, 보통 마지막 **Field Injection**을 제일 많이 사용합니다.  
 
 * * *
 
-**2-1. Constructor Injection**
+**2-1. Constructor Injection**  
 
 ```java
 @Component
@@ -52,21 +62,21 @@ public class BaseComponent {
 }
 ```
 
-**생성자 기반 DI**의 장점은 빈 생성시점에 주입됨으로써,
+**생성자 기반 DI**의 장점은 빈 생성시점에 주입됨으로써,  
 
-주입받는 필드를 **final**로 상수 선언이 가능하다는 점입니다.
-이 점은 필수적인 디팬던시를 관리할 때 편리합니다. **(Required Dependencies)**
+주입받는 필드를 **final**로 상수 선언이 가능하다는 점입니다.  
+이 점은 필수적인 디팬던시를 관리할 때 편리합니다. **(Required Dependencies)**  
 
-스프링 4.3부터는 생성자 기반 DI에서 빈의 생성자가 하나만 있을 경우,
+스프링 4.3부터는 생성자 기반 DI에서 빈의 생성자가 하나만 있을 경우,  
 
-**@Autowired 생략해도 자동으로 Injection됩니다**
+**@Autowired 생략해도 자동으로 Injection됩니다**  
 
 
-추가로 **Lombok**의 **@RequiredArgsConstructor**까지 사용하면 깔끔하게 생성자까지 생략할 수 있습니다.
+추가로 **Lombok**의 **@RequiredArgsConstructor**까지 사용하면 깔끔하게 생성자까지 생략할 수 있습니다.  
 
 * * *
 
-**2-2. Setter Injection**
+**2-2. Setter Injection**  
 
 ```java
 @Component
@@ -83,17 +93,17 @@ public class BaseComponent {
 }
 ```
 
-**Setter 기반 DI**는 다음과 같이 setter메서드에 사용합니다.
+**Setter 기반 DI**는 다음과 같이 setter메서드에 사용합니다.  
 
-여기서 **@Autowired** 애너테이션은 생략될 수 없으며,
+여기서 **@Autowired** 애너테이션은 생략될 수 없으며,  
 
-빈 생성과 동시에 주입되지 않고, 빈 생성이 끝난 후 setter을 호출하여 주입합니다.
+빈 생성과 동시에 주입되지 않고, 빈 생성이 끝난 후 setter을 호출하여 주입합니다.  
 
-그렇기 때문에 **final**을 사용할 경우 컴파일 에러가 발생합니다.
+그렇기 때문에 **final**을 사용할 경우 컴파일 에러가 발생합니다.  
 
 * * *
 
-**2-3. Field Injection**
+**2-3. Field Injection**  
 
 ```java
 @Component
@@ -106,17 +116,17 @@ public class BaseComponent {
 }
 ```
 
-**Field Injection**은 프로젝트를 하면서 가장 자주 접하게 되는 주입 방식입니다.
+**Field Injection**은 프로젝트를 하면서 가장 자주 접하게 되는 주입 방식입니다.  
 
-setter기반과 마찬가지로 빈 생성이 완료된 이후 주입되며, 마찬가지로 **final**로 선언할 수 없습니다.
+setter기반과 마찬가지로 빈 생성이 완료된 이후 주입되며, 마찬가지로 **final**로 선언할 수 없습니다.  
 
 
-하지만 앞선 다른 방식들과 다르게 간단하게 필드에 @Autowired 같은 애너테이션만 달아주기 때문에
-매우 간결해 보이며 유지보수에 편해 보입니다.
+하지만 앞선 다른 방식들과 다르게 간단하게 필드에 @Autowired 같은 애너테이션만 달아주기 때문에  
+매우 간결해 보이며 유지보수에 편해 보입니다.  
 
-하지만 IDE와 스프링팀에서 경고하듯이 **몇 가지 단점**이 있으며,
+하지만 IDE와 스프링팀에서 경고하듯이 **몇 가지 단점**이 있으며,  
 
-이 때문에 **Spring Document**에도 기재되어 있지 않습니다.
+이 때문에 **Spring Document**에도 기재되어 있지 않습니다.  
 
 * * *
 
@@ -124,49 +134,69 @@ setter기반과 마찬가지로 빈 생성이 완료된 이후 주입되며, 마
 
 #### **- 1. 주입된 객체는 Immutable한 상태를 만들 수 없다.**
 
-   오직 **Constructor Injection** 만이 **final** 선언이 가능합니다.
-   나머지 방법은 주입되는 필드에 대해 **mutable**한 상태를 만들기 때문에
+   오직 **Constructor Injection** 만이 **final** 선언이 가능합니다.  
+   나머지 방법은 주입되는 필드에 대해 **mutable**한 상태를 만들기 때문에  
 
-   가급적이면 생성자 주입을 적용하는게 좋습니다.
+   가급적이면 생성자 주입을 적용하는게 좋습니다.  
 
 #### **- 2. DI 컨테이너에 강한 결합 발생**
 
-   **Field Injection**은 생성자를 통해서도, **setter**를 통해서도 주입을 받는 방식이 아닙니다.
+   **Field Injection**은 생성자를 통해서도, **setter**를 통해서도 주입을 받는 방식이 아닙니다.  
 
-   그렇기 때문에 Spring이 아니면 해당 필드에 Injection을 할 수 있는 방법이 없습니다. ( 리플렉션 제외 )
+   그렇기 때문에 Spring이 아니면 해당 필드에 Injection을 할 수 있는 방법이 없습니다. ( 리플렉션 제외 )  
 
-   즉, **Spring DI** **컨테이너** 밖에서 작동할 수 없는 코드를 만듭니다.
+   즉, **Spring DI** **컨테이너** 밖에서 작동할 수 없는 코드를 만듭니다.  
 
-   이는 흔히 소프트웨어 공학에서 추구하는 **loose coupling (**결합도를 낮추고 응집도를 높이는 행위)와 반대됩니다.
+   이는 흔히 소프트웨어 공학에서 추구하는 **loose coupling (**결합도를 낮추고 응집도를 높이는 행위)와 반대됩니다.  
 
 ### **- 3. SRP 위반 경고 은폐 (Single Responsibility Principle)**
 
-   사실 이 부분에 저는 동의하지 않습니다. 하지만 다른 곳에서는 **Field injection**이
+   사실 이 부분에 저는 동의하지 않습니다. 하지만 다른 곳에서는 **Field injection**이  
 
-   객체지항의 원칙 **SOLID 중에서**단일 책임의 원칙의 위배에 대한 코드스펠을 은폐시킨다고합니다.
+   객체지항의 원칙 **SOLID 중에서**단일 책임의 원칙의 위배에 대한 코드스펠을 은폐시킨다고합니다.  
 
-   **생성자 기반 DI**는 생성자가 주입받는 객체가 많아질수록 코드 길이가 길어져
+   **생성자 기반 DI**는 생성자가 주입받는 객체가 많아질수록 코드 길이가 길어져  
 
-   **리팩토링**의 필요성을 경고하는데, **Field Injection**은 이 부분을 숨긴다고 합니다.
+   **리팩토링**의 필요성을 경고하는데, **Field Injection**은 이 부분을 숨긴다고 합니다.  
 
-![](/images/blog/spring-field-injection-bad/img_3.png)
-![](/images/blog/spring-field-injection-bad/img_4.png)
 
-굳이 롬복이 아니더라도 코틀린에서 볼까요?
 
-![](/images/blog/spring-field-injection-bad/img_5.png)
-![](/images/blog/spring-field-injection-bad/img_6.png)
+<PostImage src="/images/blog/spring-field-injection-bad/img_3.png" alt="" />
 
-3번은 사람마다 차이는 있으나 1번, 2번은 확실히 장점처럼 보입니다.
+
+
+
+<PostImage src="/images/blog/spring-field-injection-bad/img_4.png" alt="" />
+
+
+
+굳이 롬복이 아니더라도 코틀린에서 볼까요?  
+
+
+
+<PostImage src="/images/blog/spring-field-injection-bad/img_5.png" alt="" />
+
+
+
+
+<PostImage src="/images/blog/spring-field-injection-bad/img_6.png" alt="" />
+
+
+
+3번은 사람마다 차이는 있으나 1번, 2번은 확실히 장점처럼 보입니다.  
 
 ### **4. 결론 및 추천 방법**
 
-[Spring 5.2.3 Reference](https://docs.spring.io/spring/docs/5.2.3.RELEASE/spring-framework-reference/core.html#beans-setter-injection)에서는
-**필수적인 의존성**에서는 **Constructor Injection**을,
+[Spring 5.2.3 Reference](https://docs.spring.io/spring/docs/5.2.3.RELEASE/spring-framework-reference/core.html#beans-setter-injection)에서는  
+**필수적인 의존성**에서는 **Constructor Injection**을,  
 
-**선택적인 의존성**에서는 **Setter Injection을** 사용하라고 합니다.
+**선택적인 의존성**에서는 **Setter Injection을** 사용하라고 합니다.  
 
-또한 **Setter Injection**은 실행 이후 다시 Injection을 할 수 있다는 장점이 있네요.
-아직 **Opional**한 의존성을 겪어보지는 못했으니, 웬만한 경우에는 생성자 기반 DI를 사용하면 될 듯합니다.
+또한 **Setter Injection**은 실행 이후 다시 Injection을 할 수 있다는 장점이 있네요.  
+아직 **Opional**한 의존성을 겪어보지는 못했으니, 웬만한 경우에는 생성자 기반 DI를 사용하면 될 듯합니다.  
 
-![](/images/blog/spring-field-injection-bad/img_2.png)
+
+
+<PostImage src="/images/blog/spring-field-injection-bad/img_2.png" alt="" />
+
+
