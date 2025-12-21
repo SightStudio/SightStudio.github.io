@@ -27,7 +27,7 @@ export const headerData = {
 export const footerData = {
   links: [],
   socialLinks: [
-    { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/SightStudio' },
+    { ariaLabel: 'RSS', icon: 'tabler:rss', href: '/rss.xml' },
     {
       ariaLabel: 'LinkedIn',
       icon: 'tabler:brand-linkedin',
